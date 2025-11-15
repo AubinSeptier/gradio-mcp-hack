@@ -1,0 +1,28 @@
+# .pre-commit-config.yaml
+repos:
+  # Ruff setup
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.14.5
+    hooks:
+      # Linter
+      - id: ruff
+        args: [--fix]
+        types_or: [python, pyi, jupyter]
+      # Formatter
+      - id: ruff-format
+        types_or: [python, pyi, jupyter]
+
+  # General pre-commit hooks setup
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v6.0.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-yaml
+      - id: check-toml
+      - id: check-added-large-files
+        args: [--maxkb=1000]
+      - id: check-merge-conflict
+      - id: debug-statements
+      - id: mixed-line-ending
+        args: [--fix=lf]

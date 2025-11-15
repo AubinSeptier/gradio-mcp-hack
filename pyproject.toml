@@ -1,0 +1,55 @@
+[build-system]
+requires = ["hatchling >= 1.26"]
+build-backend = "hatchling.build"
+
+[project]
+name = "gradio-mcp-hack"
+version = "0.1.0"
+description = "MCP's 1st Birthday Hackathon project"
+readme = "README.md"
+authors = [
+  {name = "Aubin Septier"},
+  {name = "Théophile Baudry"},
+]
+license = "MIT"
+dependencies = [
+    "gradio[mcp]>=6.0.0.dev4,<7.0.0",
+]
+requires-python = ">=3.10, <3.14"
+
+[project.optional-dependencies]
+dev = [
+    "ruff>=0.13.0",
+    "pre-commit>=4.0.0",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src"]
+
+[tool.ruff]
+line-length = 120
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "S", "ARG", "I"]
+extend-select = ["B", "S", "I", "D", "ANN"]
+ignore = [
+    "CPY001",
+    "D100",
+    "D104",
+    "D107",
+    "D413",
+    "COM812",
+    "N812",
+]
+
+[tool.ruff.lint.isort]
+section-order = [
+	"future",
+	"standard-library",
+	"third-party",
+	"first-party",
+	"local-folder"
+]
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
