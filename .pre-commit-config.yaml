@@ -1,4 +1,4 @@
-# Fichier .pre-commit-config.yaml
+# .pre-commit-config.yaml
 repos:
   # Ruff setup
   - repo: https://github.com/astral-sh/ruff-pre-commit
