@@ -1,1 +1,1 @@
-# gradio-mcp-hack
+# Gradio x MCP Hackathon Project
