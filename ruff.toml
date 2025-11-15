@@ -1,0 +1,29 @@
+line-length = 88
+
+[lint]
+
+select = ["E", "F", "W", "S", "ARG", "I"]
+
+extend-select = ["B", "S", "I", "D", "ANN"]
+
+ignore = [
+    "CPY001",
+    "D100",
+    "D104",
+    "D107",
+    "D413",
+    "COM812",
+    "N812"
+]
+
+[lint.isort]
+section-order = [
+	"future",
+	"standard-library",
+	"third-party",
+	"first-party",
+	"local-folder"
+]
+
+[lint.pydocstyle]
+convention = "google"
