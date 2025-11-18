@@ -1,4 +1,10 @@
-# Gradio x MCP Hackathon Project
+# Gradio x MCP Hackathon Project -- France Chômage
+
+## 📚 Overview
+
+This repository contains the code for the [Gradio x MCP Hackathon](https://huggingface.co/MCP-1st-Birthday) project named "**France Chômage**". The project consists of two tracks, each with its own application:
+- [**Track 1**](src/france-chomage-mcp-server/README.md) - A gradio MCP server providing AI agents with tools to search for and analyze job offers.
+- [**Track 2**](src/agentic-france-chomage/README.md) - A gradio multi-agents application using MCP tools to search for job offers that match a user's profile and search criteria.
 
 ## 📋 Pre-requisites
 
@@ -66,16 +72,17 @@ gradio-mcp-hack/
 ├── .github/
 │   └── PULL_REQUEST_TEMPLATE.md
 ├── src/
-│   └── track1/
+│   └── france-chomage-mcp-server/
 │       └── README.md
         └── app.py
-│   └── track2/
+│   └── agentic-france-chomage/
 │       └── README.md
 │       └── app.py
 ├── .gitignore
 ├── pyproject.toml
 ├── .pre-commit-config.yaml
 └── README.md
+└── LICENSE
 ```
 
 ## 🤝 Contribution
