@@ -1,5 +1,5 @@
 ---
-title: Sample1 - Hackathon Space Submission
+title: France Chômage - MCP Server
 emoji: 📊
 colorFrom: green
 colorTo: red
@@ -8,9 +8,7 @@ sdk_version: 6.0.0.dev4
 app_file: app.py
 pinned: false
 license: mit
-short_description: Sample space with tags for MCP 1st Birthday party
+short_description: A gradio MCP server providing AI agents with tools to search for and analyze job offers. Created for the Gradio x MCP Hackathon.
 tags:
-- building-mcp-track-enterprise
 - building-mcp-track-customer
-- building-mcp-track-creative
 ---
