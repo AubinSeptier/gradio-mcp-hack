@@ -1,0 +1,52 @@
+name: Sync Agentic France Chomage App to Hugging Face Space
+on:
+  workflow_dispatch:
+
+jobs:
+  sync-to-hub:
+    runs-on: ubuntu-latest
+    steps:
+        - uses: actions/checkout@v6
+          with:
+            fetch-depth: 0
+            lfs: true
+        - name: Configure Git
+          run: |
+            git config --global user.email "github-actions[bot]@users.noreply.github.com"
+            git config --global user.name "github-actions[bot]"
+
+        - name: Create temporary branch with app folder content
+          run: |
+            set -euo pipefail
+            SRC_DIR="src/agentic-france-chomage"
+            if [ ! -d "$SRC_DIR" ]; then
+              echo "Source directory $SRC_DIR not found." >&2
+              exit 1
+            fi
+            TMPDIR="/tmp/app-content"
+            rm -rf "$TMPDIR"
+            mkdir -p "$TMPDIR"
+            cp -a "${SRC_DIR}/." "$TMPDIR"/
+            cd "$TMPDIR"
+            git init
+            git checkout -b main
+            git add .
+            if git diff --cached --quiet; then
+              echo "No changes to commit."
+              exit 0
+            else
+              git commit -m "Sync Agentic France Chomage App content to Hugging Face Space"
+            fi
+
+        - name: Push to Hugging Face Space
+          env:
+            HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          run: |
+            set -euo pipefail
+            if [ -z "${HF_TOKEN:-}" ]; then
+              echo "HF_TOKEN secret is missing" >&2
+              exit 1
+            fi
+            cd /tmp/app-content
+            git remote add hf https://huggingface.co/spaces/Aubins/France-Chomage-App.git
+            git -c http.extraheader="AUTHORIZATION: Bearer ${HF_TOKEN}" push hf main:main --force
