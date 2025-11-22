@@ -1,7 +1,7 @@
-"""Gradio app for the Hackathon track 1: Building MCP."""
+"""Gradio app for the Hackathon track 1: Building MCP."""  # noqa: INP001
 
 import gradio as gr
-from tools import job_search_tool
+from tools import job_search_tool, resume_extractor
 
 demo = gr.TabbedInterface(
     [
@@ -28,9 +28,21 @@ demo = gr.TabbedInterface(
             outputs=[gr.components.JSON()],
             title="Job Search Tool",
             description="A Job Search tool using JobSpy to scrape jobs from popular employment websites.",
-        )
+        ),
+        gr.Interface(
+            fn=resume_extractor,
+            inputs=[
+                gr.components.File(label="Upload Resume (PDF format)", file_types=[".pdf"]),
+            ],
+            outputs=[gr.components.JSON()],
+            title="Resume Extractor",
+            description=(
+                "A Resume Extractor tool using a VLM to analyze your resume and "
+                "extract relevant information. ❗ Only resumes with 1 page and in PDF format are supported."
+            ),
+        ),
     ],
-    ["Job Search Tool"],
+    ["Job Search Tool", "Resume Extractor"],
 )
 
 
