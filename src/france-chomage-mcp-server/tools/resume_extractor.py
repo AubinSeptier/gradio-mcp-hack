@@ -30,6 +30,8 @@ class ResumeData(BaseModel):
     hard_skills: list[str] = Field(..., description="List of hard skills mentioned in the resume")
     education: list[Experience] = Field(..., description="List of educational qualifications")
     experiences: list[Experience] = Field(..., description="List of professional experiences")
+    projects: list[str] = Field(..., description="List of projects undertaken by the candidate")
+    publications: list[str] = Field(..., description="List of publications (papers, articles, etc.) by the candidate")
     languages: list[str] = Field(..., description="Languages known by the candidate")
     others: list[str] = Field(..., description="Other relevant information")
 
@@ -67,6 +69,8 @@ def resume_extractor(resume_file: str) -> dict:
     - hard_skills (list[str]): List of hard skills mentioned in the resume.
     - education (list[Experience]): List of educational qualifications.
     - experiences (list[Experience]): List of professional experiences.
+    - projects (list[str]): List of projects undertaken by the candidate.
+    - publications (list[str]): List of publications (papers, articles, etc.) by the candidate.
     - languages (list[str]): Languages known by the candidate.
     - others (list[str]): Other relevant information.
 
