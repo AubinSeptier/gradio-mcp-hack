@@ -36,7 +36,10 @@ demo = gr.TabbedInterface(
             ],
             outputs=[gr.components.JSON()],
             title="Resume Extractor",
-            description="A Resume Extractor tool using a VLM to analyze your resume and extract relevant information.",
+            description=(
+                "A Resume Extractor tool using a VLM to analyze your resume and "
+                "extract relevant information. ❗ Only resumes with 1 page and in PDF format are supported."
+            ),
         ),
     ],
     ["Job Search Tool", "Resume Extractor"],
