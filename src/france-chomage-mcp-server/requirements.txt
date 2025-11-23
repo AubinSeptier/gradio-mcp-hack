@@ -1,0 +1,5 @@
+gradio[mcp]==6.0.0.dev4
+python-jobspy==1.1.82
+pydantic==2.12.4
+pdf2image==1.17.0
+openai==2.8.1
