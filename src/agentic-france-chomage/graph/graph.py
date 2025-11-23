@@ -12,7 +12,14 @@ from graph.state import AgentState
 
 
 def build_graph():
-    """Construct the job-search pipeline graph."""
+    """
+    Construct the job-search pipeline graph.
+    
+    Profiling -> Researcher -> Filtering -> Ranking
+    
+    Returns:
+        Compiled StateGraph instance.
+    """
     
     workflow = StateGraph(AgentState)
 
