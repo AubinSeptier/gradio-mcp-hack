@@ -6,7 +6,7 @@ then calls the job search MCP tool.
 from __future__ import annotations
 
 import json
-from typing import Any, Dict, Tuple
+from typing import Any
 
 from graph.state import AgentState
 from utils import load_tool, nebius_client
@@ -15,7 +15,7 @@ job_search_tool = load_tool("job_search_tool")
 
 
 # Helpers -------------
-def _guess_search_terms(profile: Dict[str, Any], preferences: Dict[str, Any]) -> Tuple[str, str]:
+def _guess_search_terms(profile: dict[str, Any], preferences: dict[str, Any]) -> tuple[str, str]:
     """Use Nebius LLM to propose search terms."""
     
     client = nebius_client()
@@ -51,7 +51,7 @@ def _guess_search_terms(profile: Dict[str, Any], preferences: Dict[str, Any]) ->
 
 
 # Node -----------------
-def researcher_node(state: AgentState) -> Dict[str, Any]:
+def researcher_node(state: AgentState) -> dict[str, Any]:
     """Search for jobs based on the extracted profile and preferences."""
     
     profile = state.get("profil_extracted") or {}
