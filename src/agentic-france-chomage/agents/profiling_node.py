@@ -5,7 +5,7 @@ from resume_file.
 
 from __future__ import annotations
 
-from typing import Any, Dict
+from typing import Any
 
 from graph.state import AgentState
 from utils import load_tool
@@ -14,7 +14,7 @@ resume_extractor = load_tool("resume_extractor")
 
 
 # Node ----------------
-def profiling_node(state: AgentState) -> Dict[str, Any]:
+def profiling_node(state: AgentState) -> dict[str, Any]:
     """Extract a structured profile from the provided resume file."""
     
     resume_file = state.get("resume_file")

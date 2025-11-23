@@ -6,7 +6,7 @@ the profile and preferences.
 from __future__ import annotations
 
 import json
-from typing import Any, Dict, List
+from typing import Any
 
 from graph.state import AgentState
 from utils import nebius_client
@@ -16,10 +16,10 @@ NA_SCORE = -1
 
 # Helpers -------------
 def _llm_rank_jobs(
-    jobs: List[Dict[str, Any]],
-    profile: Dict[str, Any],
-    preferences: Dict[str, Any],
-) -> List[Dict[str, Any]]:
+    jobs: list[dict[str, Any]],
+    profile: dict[str, Any],
+    preferences: dict[str, Any],
+) -> list[dict[str, Any]]:
     """Ask Nebius LLM to score jobs; returns jobs with scores (NA when missing)."""
     try:
         client = nebius_client()
@@ -46,7 +46,7 @@ def _llm_rank_jobs(
         content = (response.choices[0].message.content or "").strip()
         parsed = json.loads(content)
         scores = parsed.get("scores")
-        mapping: Dict[int, int] = {}
+        mapping: dict[int, int] = {}
         if isinstance(scores, list):
             for item in scores:
                 if not isinstance(item, dict):
@@ -58,7 +58,7 @@ def _llm_rank_jobs(
     except Exception:
         mapping = {}
 
-    scored_jobs: List[Dict[str, Any]] = []
+    scored_jobs: list[dict[str, Any]] = []
     for idx, job in enumerate(jobs):
         score = mapping.get(idx, NA_SCORE)
         scored_jobs.append({**job, "score": int(score)})
@@ -66,14 +66,14 @@ def _llm_rank_jobs(
 
 
 # Node -----------------
-def ranking_node(state: AgentState) -> Dict[str, Any]:
+def ranking_node(state: AgentState) -> dict[str, Any]:
     """Rank filtered jobs with Nebius LLM; mark missing scores as N/A."""
 
     preferences = state.get("job_preferences") or {}
     profile = state.get("profil_extracted") or {}
     job_source = state.get("job_filtered") or state.get("job_search_results") or {}
     if isinstance(job_source, dict):
-        jobs: List[Dict[str, Any]] = job_source.get("jobs") or []
+        jobs: list[dict[str, Any]] = job_source.get("jobs") or []
     else:
         jobs = job_source
 
