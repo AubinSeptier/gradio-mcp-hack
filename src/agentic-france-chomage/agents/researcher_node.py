@@ -8,10 +8,16 @@ from __future__ import annotations
 import json
 from typing import Any
 
+from pydantic import BaseModel
 from graph.state import AgentState
 from utils import load_tool, nebius_client
 
 job_search_tool = load_tool("job_search_tool")
+
+
+class SearchTerms(BaseModel):
+    search_term: str
+    google_search_term: str
 
 
 # Helpers -------------
@@ -30,24 +36,25 @@ def _guess_search_terms(profile: dict[str, Any], preferences: dict[str, Any]) ->
     user_payload = {"profile": profile, "preferences": preferences}
     
     try:
-        response = client.chat.completions.create(
+        response = client.chat.completions.parse(
             model="openai/gpt-oss-20b",
             messages=[
                 {"role": "system", "content": system_prompt},
                 {"role": "user", "content": json.dumps(user_payload, ensure_ascii=False)},
             ],
+            response_format=SearchTerms,
             temperature=0.2,
             max_tokens=120,
         )
-        content = (response.choices[0].message.content or "").strip()
-        parsed = json.loads(content)
-        search_term = parsed.get("search_term")
-        google_search_term = parsed.get("google_search_term")
-        if isinstance(search_term, str) and isinstance(google_search_term, str):
-            return search_term.strip(), google_search_term.strip()
+        message = response.choices[0].message
+        parsed = (
+            getattr(message, "parsed", None)
+            or SearchTerms.model_validate_json((message.content or "{}").strip())
+        )
+        return parsed.search_term.strip(), parsed.google_search_term.strip()
 
-    except (json.JSONDecodeError, KeyError, IndexError, AttributeError, ValueError) as e:
-        return {"error": f"Search term request failed: {e}"}
+    except Exception:
+        return "", ""
 
 
 # Node -----------------

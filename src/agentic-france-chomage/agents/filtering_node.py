@@ -8,8 +8,13 @@ from __future__ import annotations
 import json
 from typing import Any
 
+from pydantic import BaseModel
 from graph.state import AgentState
 from utils import nebius_client
+
+
+class FilteringResult(BaseModel):
+    keep_indices: list[int]
 
 
 # Helpers -------------
@@ -32,21 +37,23 @@ def _llm_filter_jobs(
             "preferences": preferences,
             "jobs": jobs_with_indices,
         }
-        response = client.chat.completions.create(
+        response = client.chat.completions.parse(
             model="openai/gpt-oss-120b",
             messages=[
                 {"role": "system", "content": system_prompt},
                 {"role": "user", "content": json.dumps(user_payload, ensure_ascii=False)},
             ],
+            response_format=FilteringResult,
             temperature=0.15,
             max_tokens=200,
         )
-        content = (response.choices[0].message.content or "").strip()
-        parsed = json.loads(content)
-        keep = parsed.get("keep_indices")
-        if isinstance(keep, list):
-            valid = [int(i) for i in keep if isinstance(i, int) and 0 <= i < len(jobs)]
-            return valid
+        message = response.choices[0].message
+        parsed = (
+            getattr(message, "parsed", None)
+            or FilteringResult.model_validate_json((message.content or "{}").strip())
+        )
+        keep = [i for i in parsed.keep_indices if 0 <= i < len(jobs)]
+        return keep
     except Exception:
         return None
     return None

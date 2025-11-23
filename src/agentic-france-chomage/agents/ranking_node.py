@@ -8,10 +8,20 @@ from __future__ import annotations
 import json
 from typing import Any
 
+from pydantic import BaseModel
 from graph.state import AgentState
 from utils import nebius_client
 
 NA_SCORE = -1
+
+
+class JobScore(BaseModel):
+    index: int
+    score: int
+
+
+class RankingResult(BaseModel):
+    scores: list[JobScore]
 
 
 # Helpers -------------
@@ -34,27 +44,28 @@ def _llm_rank_jobs(
             "preferences": preferences,
             "jobs": jobs_with_indices,
         }
-        response = client.chat.completions.create(
+        response = client.chat.completions.parse(
             model="openai/gpt-oss-120b",
             messages=[
                 {"role": "system", "content": system_prompt},
                 {"role": "user", "content": json.dumps(user_payload, ensure_ascii=False)},
             ],
+            response_format=RankingResult,
             temperature=0.2,
             max_tokens=240,
         )
-        content = (response.choices[0].message.content or "").strip()
-        parsed = json.loads(content)
-        scores = parsed.get("scores")
+        message = response.choices[0].message
+        parsed = (
+            getattr(message, "parsed", None)
+            or RankingResult.model_validate_json((message.content or "{}").strip())
+        )
+        scores = parsed.scores
         mapping: dict[int, int] = {}
-        if isinstance(scores, list):
-            for item in scores:
-                if not isinstance(item, dict):
-                    continue
-                idx = item.get("index")
-                sc = item.get("score")
-                if isinstance(idx, int) and isinstance(sc, int) and 0 <= idx < len(jobs):
-                    mapping[idx] = sc
+        for item in scores:
+            idx = item.index
+            sc = item.score
+            if 0 <= idx < len(jobs):
+                mapping[idx] = sc
     except Exception:
         mapping = {}
 
