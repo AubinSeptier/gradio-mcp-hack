@@ -6,7 +6,7 @@ job_search_results to produce job_filtered.
 from __future__ import annotations
 
 import json
-from typing import Any, Dict, List
+from typing import Any
 
 from graph.state import AgentState
 from utils import nebius_client
@@ -14,10 +14,10 @@ from utils import nebius_client
 
 # Helpers -------------
 def _llm_filter_jobs(
-    jobs: List[Dict[str, Any]], 
-    profile: Dict[str, Any], 
-    preferences: Dict[str, Any]
-) -> List[int] | None:
+    jobs: list[dict[str, Any]], 
+    profile: dict[str, Any], 
+    preferences: dict[str, Any]
+) -> list[int] | None:
     """Ask Nebius LLM which jobs to keep; returns indices to keep or None on failure."""
     try:
         client = nebius_client()
@@ -53,13 +53,13 @@ def _llm_filter_jobs(
 
 
 # Node -----------------
-def filtering_node(state: AgentState) -> Dict[str, Any]:
+def filtering_node(state: AgentState) -> dict[str, Any]:
     """Filter job results using Nebius LLM."""
 
     preferences = state.get("job_preferences") or {}
     profile = state.get("profil_extracted") or {}
     job_results = state.get("job_search_results") or []
-    jobs: List[Dict[str, Any]]
+    jobs: list[dict[str, Any]]
     if isinstance(job_results, dict): # metadata about the search could be added later
         jobs = job_results.get("jobs") or []
     else:
