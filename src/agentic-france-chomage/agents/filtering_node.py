@@ -56,7 +56,6 @@ def _llm_filter_jobs(
         return keep
     except Exception:
         return None
-    return None
 
 
 # Node -----------------
