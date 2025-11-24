@@ -9,7 +9,7 @@ import json
 from typing import Any
 
 from pydantic import BaseModel
-from graph.state import AgentState
+from graph import AgentState
 from utils import load_tool, nebius_client
 
 job_search_tool = load_tool("job_search_tool")
@@ -34,7 +34,7 @@ def _guess_search_terms(profile: dict[str, Any], preferences: dict[str, Any]) ->
         "Return ONLY the JSON object, without any additional text."
     )
     user_payload = {"profile": profile, "preferences": preferences}
-    
+
     try:
         response = client.chat.completions.parse(
             model="openai/gpt-oss-20b",

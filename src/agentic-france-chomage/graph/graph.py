@@ -4,10 +4,10 @@ from __future__ import annotations
 
 from langgraph.graph import END, StateGraph
 
-from agents.filtering_node import filtering_node
-from agents.profiling_node import profiling_node
-from agents.ranking_node import ranking_node
-from agents.researcher_node import researcher_node
+from agents import filtering_node
+from agents import profiling_node
+from agents import ranking_node
+from agents import researcher_node
 from graph.state import AgentState
 
 

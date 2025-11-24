@@ -9,7 +9,7 @@ import json
 from typing import Any
 
 from pydantic import BaseModel
-from graph.state import AgentState
+from graph import AgentState
 from utils import nebius_client
 
 
