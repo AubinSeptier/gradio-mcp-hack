@@ -36,6 +36,8 @@ This MCP server can be deployed on Blaxel platform. To do so, follow these steps
   The configuration is already set up in the `blaxel.toml` file and Dockerfile in the repository. Please free to modify
   them according to your needs.
 
+> Note: The python file used is not the `app.py` file but the `server.py` file.
+
 ## ⚠️ Limitations
 Here are some limitations to be aware of:
 - The Job Search Tool may not retrieve all job listings due to website restrictions. LinkedIn is quickly blocking
