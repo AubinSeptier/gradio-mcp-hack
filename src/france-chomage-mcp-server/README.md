@@ -74,6 +74,23 @@ This MCP server can be deployed on [Blaxel AI](https://blaxel.ai/)! Follow these
 
 > Note: Blaxel AI provides a free tier with $200 credits for new users, then pay-as-you-go pricing. Check their website for more details.
 
+## 🏰 MCP Server Architecture
+
+The MCP server codebase follows this architecture:
+```
+france-chomage-mcp-server/
+├── app.py                  # Main Gradio app file
+├── server.py               # MCP server implementation using FastMCP for Blaxel deployment
+├── tools/                  # Directory containing MCP tools
+│   ├── job_search_tool.py   # Job Search Tool implementation
+│   └── resume_extractor.py  # Resume Extractor Tool implementation
+├── requirements.txt        # Python dependencies
+├── Dockerfile              # Dockerfile for Blaxel deployment
+├── blaxel.toml             # Blaxel configuration file
+└── README.md               # This README file
+└── .env.example          # Example environment variables file
+```
+
 ## 🔧 Tools included
 Our MCP server includes the following tools:
 - **Job Search Tool**: A Job Search tool using JobSpy to scrape jobs from popular employment
