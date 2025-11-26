@@ -23,12 +23,16 @@ To directly use the tools, navigate to the respective tabs in the interface.
 The simple way to use the MCP server with Gradio and HF Space is to clone this repository and use this cloned version of
   the app.
 
+> Note: Please refer to the `README.md` file in the repository for more information about this MCP server, its
+  configuration and dependencies.
+
 ## 🚀 Blaxel Deployment
 
 This MCP server can be deployed on Blaxel platform. To do so, follow these steps:
 1. Create a Blaxel account if you don't have one.
-2. Install the Blaxel CLI by following the instructions at https://docs.blaxel.ai/Get-started.
-2. Use the `bl deploy` command from the Blaxel CLI to deploy the MCP server on their infrastructure.
+2. Install the Blaxel CLI by following the instructions at https://docs.blaxel.ai/Get-started
+  and log in with `bl login`.
+3. Use the `bl deploy` command from the Blaxel CLI to deploy the MCP server on their infrastructure.
   The configuration is already set up in the `blaxel.toml` file and Dockerfile in the repository. Please free to modify
   them according to your needs.
 
@@ -46,10 +50,7 @@ Here are some limitations to be aware of:
   capabilities.
 - The Resume Extractor currently only supports resumes in PDF format and with a single page.
 
-> Note: Please refer to the `README.md` file in the repository for more information about this MCP server, its
-  configuration and dependencies.
-
-## 👩🏼‍⚖️ Licence, Acknowledgements, and Contributing
+## 👩🏼‍⚖️ Licence & Acknowledgements
 Licence is MIT.
 
 The project is open-source and available on [GitHub repository](https://github.com/AubinSeptier/gradio-mcp-hack).
@@ -57,7 +58,7 @@ The project is open-source and available on [GitHub repository](https://github.c
 We know this MCP server is not perfect and has limitations. As we said before, this is our first MCP server project.
   And we have learned a lot during its development about MCP servers, Gradio, Blaxel deployment, and more.
 
-A big thank you to the Gradio team for creating such an amazing library and platform, and for organizing this hackathon
+A big thank you to the Gradio team for creating such an amazing library, and for organizing this hackathon
   to celebrate MCP's first birthday!
 
 Special thanks to JobSpy developers for their incredible library, which made the implementation of the Job Search Tool
@@ -65,9 +66,9 @@ Special thanks to JobSpy developers for their incredible library, which made the
 
 Thank you to Nebius and Blaxel AI for sponsoring this hackathon and providing resources for deployment.
 
-### 💻 Contributing
+## 💻 Contributing
 Feel free to contribute to this MCP server by submitting issues or pull requests on the GitHub repository.
-  You can also clone the repository and modify the code to suit your needs.
+  You can also fork the repository and modify the code to suit your needs.
 
 For any questions or support, please open an issue on Github.
 """
