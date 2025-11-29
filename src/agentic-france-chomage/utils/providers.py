@@ -12,6 +12,9 @@ def nebius_client() -> OpenAI:
 
     Returns:
         OpenAI: Configured Nebius client.
+
+    Raises:
+        EnvironmentError: If the NEBIUS_API_KEY environment variable is not set.
     """
     api_key = os.getenv("NEBIUS_API_KEY", None)
     if api_key is None:
