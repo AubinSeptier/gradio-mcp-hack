@@ -20,7 +20,16 @@ class FilteringResult(BaseModel):
 def _llm_filter_jobs(
     jobs: list[dict[str, Any]], profile: dict[str, Any], preferences: dict[str, Any]
 ) -> list[int] | None:
-    """Ask Nebius LLM which jobs to keep; returns indices to keep or None on failure."""
+    """Ask a LLM which jobs to keep; returns indices to keep or None on failure.
+
+    Args:
+        jobs (list[dict[str, Any]]): List of job dicts to filter.
+        profile (dict[str, Any]): Extracted candidate profile information.
+        preferences (dict[str, Any]): Candidate job preferences.
+
+    Returns:
+        list[int] | None: List of indices of jobs to keep, or None on failure.
+    """
     try:
         client = nebius_client()
         system_prompt = (
@@ -57,7 +66,14 @@ def _llm_filter_jobs(
 
 # Node -----------------
 def filtering_node(state: AgentState) -> dict[str, Any]:
-    """Filter job results using Nebius LLM."""
+    """Filter job results using a LLM.
+
+    Args:
+        state (AgentState): Current agent state containing job search results and candidate info.
+
+    Returns:
+        dict: New agent state with filtered job results.
+    """
     preferences = state.get("job_preferences") or {}
     profile = state.get("profil_extracted") or {}
     job_results = state.get("job_search_results") or []
