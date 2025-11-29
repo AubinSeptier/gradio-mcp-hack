@@ -58,7 +58,7 @@ pip install -r requirements.txt
 Rename the `.env.example` file to `.env` and set your environment variables as needed:
 
 ```bash
-cp .env.example .env
+mv .env.example .env
 ```
 
 Finally, run the MCP server:
