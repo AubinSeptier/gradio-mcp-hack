@@ -1,7 +1,4 @@
-"""
-Agent node that uses the resume_extractor tool to produce profil_extracted 
-from resume_file.
-"""
+"""Agent node that uses the resume_extractor tool to produce profil_extracted from resume_file."""
 
 from __future__ import annotations
 
@@ -16,7 +13,6 @@ resume_extractor = load_tool("resume_extractor")
 # Node ----------------
 def profiling_node(state: AgentState) -> dict[str, Any]:
     """Extract a structured profile from the provided resume file."""
-    
     resume_file = state.get("resume_file")
     if not resume_file:
         raise ValueError("profiling_node requires a 'resume_file' path in the state.")

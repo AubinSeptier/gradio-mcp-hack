@@ -17,7 +17,7 @@ def _ensure_tools_on_path() -> Path:
     return tools_root
 
 
-def load_tool(tool_name: str) -> Any:
+def load_tool(tool_name: str) -> Any:  # noqa: ANN401
     """Import a tool callable from the shared MCP tools package."""
     _ensure_tools_on_path()
     try:

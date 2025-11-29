@@ -1,14 +1,12 @@
-"""
-Agent node that generates concise descriptions for each ranked job.
-"""
+"""Agent node that generates concise descriptions for each ranked job."""
 
 from __future__ import annotations
 
 import json
 from typing import Any
 
-from pydantic import BaseModel, Field
 from graph import AgentState
+from pydantic import BaseModel, Field
 from utils import nebius_client
 
 
@@ -62,9 +60,8 @@ def _llm_describe_jobs(
             max_tokens=8192,
         )
         message = response.choices[0].message
-        parsed = (
-            getattr(message, "parsed", None)
-            or DescriptionResult.model_validate_json((message.content or "{}").strip())
+        parsed = getattr(message, "parsed", None) or DescriptionResult.model_validate_json(
+            (message.content or "{}").strip()
         )
         return parsed.descriptions
     except Exception as exc:
@@ -81,9 +78,7 @@ def description_node(state: AgentState) -> dict[str, Any]:
     jobs: list[dict[str, Any]] = ranked.get("jobs") or []
 
     llm_descriptions = _llm_describe_jobs(jobs, profile, preferences) or []
-    mapping: dict[int, JobDescription] = {
-        item.index: item for item in llm_descriptions if 0 <= item.index < len(jobs)
-    }
+    mapping: dict[int, JobDescription] = {item.index: item for item in llm_descriptions if 0 <= item.index < len(jobs)}
 
     described_jobs: list[dict[str, Any]] = []
     descriptions_payload: list[dict[str, Any]] = []

@@ -1,11 +1,11 @@
-"""
-Interface contract between agents, structures the data that will be passed 
-from an agent to another
-"""
+"""Interface contract between agents, structures the data that will be passed from an agent to another."""
 
 from typing import TypedDict
 
+
 class AgentState(TypedDict):
+    """State data structure passed between agent nodes."""
+
     resume_file: str
     profil_extracted: dict
     job_preferences: dict
@@ -13,4 +13,3 @@ class AgentState(TypedDict):
     job_filtered: dict
     job_ranked: dict
     job_descriptions: dict
-    # ...

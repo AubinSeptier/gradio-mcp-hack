@@ -3,7 +3,9 @@
 from __future__ import annotations
 
 import os
+
 from openai import OpenAI
+
 
 def nebius_client() -> OpenAI:
     """Create a Nebius OpenAI-compatible client."""

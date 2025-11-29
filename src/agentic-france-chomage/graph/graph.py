@@ -2,26 +2,22 @@
 
 from __future__ import annotations
 
+from typing import Any
+
+from agents import description_node, filtering_node, profiling_node, ranking_node, researcher_node
 from langgraph.graph import END, StateGraph
 
-from agents import filtering_node
-from agents import profiling_node
-from agents import ranking_node
-from agents import researcher_node
-from agents import description_node
 from graph.state import AgentState
 
 
-def build_graph():
-    """
-    Construct the job-search pipeline graph.
-    
+def build_graph() -> Any:  # noqa: ANN401
+    """Construct the job-search pipeline graph.
+
     Profiling -> Researcher -> Filtering -> Ranking
-    
+
     Returns:
         Compiled StateGraph instance.
     """
-
     workflow = StateGraph(AgentState)
 
     workflow.add_node("profiling", profiling_node)

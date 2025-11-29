@@ -4,11 +4,10 @@ from __future__ import annotations
 
 import html
 import time
-from typing import Any
 from concurrent.futures import ThreadPoolExecutor
+from typing import Any
 
 import gradio as gr
-
 from graph import build_graph
 
 APP_CSS = """
@@ -90,7 +89,7 @@ details[open] .summary-action::before {content: "–";}
 @keyframes spin {to {transform: rotate(360deg);}}
 @keyframes pulseDot {0% {transform: scale(1);} 50% {transform: scale(1.16);} 100% {transform: scale(1);}}
 @keyframes fadeIn {from {opacity: 0; transform: translateY(4px);} to {opacity: 1; transform: translateY(0);}}
-"""
+"""  # noqa: E501
 
 PROGRESS_STEPS = [
     ("Profiling", "Understanding your resume"),
@@ -123,7 +122,7 @@ def _truncate(text: str, limit: int = 150) -> str:
     return cut + "..."
 
 
-def _score_meta(score: Any) -> tuple[str, str, float]:
+def _score_meta(score: Any) -> tuple[str, str, float]:  # noqa: ANN401
     """Return CSS class, label, and fill percent for score."""
     try:
         val = float(score)
@@ -168,9 +167,7 @@ def _render_progress(active_index: int | None, headline: str, finished: bool = F
     return (
         "<div class='progress-card'>"
         f"<div class='progress-head'>{safe_headline}</div>"
-        "<ul class='progress-steps'>"
-        + "".join(items)
-        + "</ul>"
+        "<ul class='progress-steps'>" + "".join(items) + "</ul>"
         "</div>"
     )
 
@@ -219,7 +216,9 @@ def _format_jobs_html(jobs: list[dict[str, Any]]) -> str:
     for job in jobs:
         title = html.escape(_first(["title", "job_title", "role", "position"], job, "Role not provided"))
         company = html.escape(_first(["company", "company_name", "employer_name"], job, "Unknown company"))
-        location = html.escape(_first(["location", "formatted_location", "city", "country"], job, "Location not provided"))
+        location = html.escape(
+            _first(["location", "formatted_location", "city", "country"], job, "Location not provided")
+        )
         rank = html.escape(str(job.get("rank") or "?"))
         link = _first(["job_url", "url", "link", "apply_link"], job, "")
         score_cls, score_label, score_fill = _score_meta(job.get("score"))
@@ -297,7 +296,7 @@ def _format_jobs_html(jobs: list[dict[str, Any]]) -> str:
     return "<div class='jobs-grid'>" + "".join(cards) + "</div>"
 
 
-def _normalize_filepath(upload: Any) -> str | None:
+def _normalize_filepath(upload: Any) -> str | None:  # noqa: ANN401
     """Accept string paths or file-like objects from Gradio."""
     if upload is None:
         return None
@@ -307,7 +306,7 @@ def _normalize_filepath(upload: Any) -> str | None:
 
 
 def run_pipeline(
-    resume_file: Any,
+    resume_file: Any,  # noqa: ANN401
     location: str,
     distance_km: float,
     job_type: str,
@@ -316,11 +315,14 @@ def run_pipeline(
     hours_old: int,
     site_name: list[str],
     notes: str,
-) -> Any:
+) -> Any:  # noqa: ANN401
     """Execute the agentic graph end-to-end with a streaming progress UI."""
     resume_path = _normalize_filepath(resume_file)
     if not resume_path:
-        yield _render_status_message("Please upload a PDF resume to start the search."), "<div class='empty-state'>Waiting for input...</div>"
+        yield (
+            _render_status_message("Please upload a PDF resume to start the search."),
+            "<div class='empty-state'>Waiting for input...</div>",
+        )
         return
 
     preferences = {
@@ -351,7 +353,10 @@ def run_pipeline(
     try:
         summary, jobs_html = future.result()
     except Exception as exc:
-        yield _render_status_message("Job matching failed", str(exc)), "<div class='empty-state'>Could not retrieve jobs.</div>"
+        yield (
+            _render_status_message("Job matching failed", str(exc)),
+            "<div class='empty-state'>Could not retrieve jobs.</div>",
+        )
         return
 
     yield _render_status_message(summary, "Adjust filters and rerun to refine results."), jobs_html
