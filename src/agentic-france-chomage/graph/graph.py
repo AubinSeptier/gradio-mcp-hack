@@ -4,10 +4,11 @@ from __future__ import annotations
 
 from langgraph.graph import END, StateGraph
 
-from agents.filtering_node import filtering_node
-from agents.profiling_node import profiling_node
-from agents.ranking_node import ranking_node
-from agents.researcher_node import researcher_node
+from agents import filtering_node
+from agents import profiling_node
+from agents import ranking_node
+from agents import researcher_node
+from agents import description_node
 from graph.state import AgentState
 
 
@@ -20,19 +21,21 @@ def build_graph():
     Returns:
         Compiled StateGraph instance.
     """
-    
+
     workflow = StateGraph(AgentState)
 
     workflow.add_node("profiling", profiling_node)
     workflow.add_node("researcher", researcher_node)
     workflow.add_node("filtering", filtering_node)
     workflow.add_node("ranking", ranking_node)
+    workflow.add_node("description", description_node)
 
     workflow.set_entry_point("profiling")
     workflow.add_edge("profiling", "researcher")
     workflow.add_edge("researcher", "filtering")
     workflow.add_edge("filtering", "ranking")
-    workflow.add_edge("ranking", END)
+    workflow.add_edge("ranking", "description")
+    workflow.add_edge("description", END)
 
     return workflow.compile()
 

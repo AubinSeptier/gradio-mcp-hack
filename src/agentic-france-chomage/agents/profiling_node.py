@@ -7,7 +7,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from graph.state import AgentState
+from graph import AgentState
 from utils import load_tool
 
 resume_extractor = load_tool("resume_extractor")

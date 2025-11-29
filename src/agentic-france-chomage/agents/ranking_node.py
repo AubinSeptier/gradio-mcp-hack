@@ -9,7 +9,7 @@ import json
 from typing import Any
 
 from pydantic import BaseModel
-from graph.state import AgentState
+from graph import AgentState
 from utils import nebius_client
 
 NA_SCORE = -1
@@ -48,11 +48,11 @@ def _llm_rank_jobs(
             model="openai/gpt-oss-120b",
             messages=[
                 {"role": "system", "content": system_prompt},
-                {"role": "user", "content": json.dumps(user_payload, ensure_ascii=False)},
+                {"role": "user", "content": json.dumps(user_payload, ensure_ascii=False, default=str)},
             ],
             response_format=RankingResult,
             temperature=0.2,
-            max_tokens=240,
+            max_tokens=8192,
         )
         message = response.choices[0].message
         parsed = (
@@ -66,8 +66,9 @@ def _llm_rank_jobs(
             sc = item.score
             if 0 <= idx < len(jobs):
                 mapping[idx] = sc
-    except Exception:
-        mapping = {}
+    except Exception as e:
+        print(f"Error in _llm_rank_jobs: {e}")
+        raise
 
     scored_jobs: list[dict[str, Any]] = []
     for idx, job in enumerate(jobs):

@@ -9,7 +9,7 @@ import json
 from typing import Any
 
 from pydantic import BaseModel
-from graph.state import AgentState
+from graph import AgentState
 from utils import nebius_client
 
 
@@ -41,11 +41,11 @@ def _llm_filter_jobs(
             model="openai/gpt-oss-120b",
             messages=[
                 {"role": "system", "content": system_prompt},
-                {"role": "user", "content": json.dumps(user_payload, ensure_ascii=False)},
+                {"role": "user", "content": json.dumps(user_payload, ensure_ascii=False, default=str)},
             ],
             response_format=FilteringResult,
             temperature=0.15,
-            max_tokens=200,
+            max_tokens=8192,
         )
         message = response.choices[0].message
         parsed = (
@@ -54,10 +54,9 @@ def _llm_filter_jobs(
         )
         keep = [i for i in parsed.keep_indices if 0 <= i < len(jobs)]
         return keep
-    except Exception:
-        return None
-    return None
-
+    except Exception as e:
+        print(f"Error in _llm_filter_jobs: {e}")
+        raise
 
 # Node -----------------
 def filtering_node(state: AgentState) -> dict[str, Any]:

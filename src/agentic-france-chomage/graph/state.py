@@ -12,4 +12,5 @@ class AgentState(TypedDict):
     job_search_results: dict
     job_filtered: dict
     job_ranked: dict
+    job_descriptions: dict
     # ...
