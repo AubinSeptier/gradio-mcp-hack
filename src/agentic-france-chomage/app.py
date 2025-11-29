@@ -383,7 +383,22 @@ def run_pipeline(
     site_name: list[str],
     notes: str,
 ) -> Any:  # noqa: ANN401
-    """Execute the agentic graph end-to-end with a streaming progress UI."""
+    """Execute the agentic graph end-to-end with a streaming progress UI.
+
+    Args:
+        resume_file (Any): Uploaded resume file.
+        location (str): Preferred job location.
+        distance_km (float): Search radius in kilometers.
+        job_type (str): Type of job to search for.
+        is_remote (bool): Whether to include remote jobs.
+        results_wanted (int): Maximum results per site.
+        hours_old (int): Posted within this many hours.
+        site_name (list[str]): List of job boards to search.
+        notes (str): Extra user preferences.
+
+    Yields:
+        Any: Generator yielding status and matches HTML.
+    """
     resume_path = _normalize_filepath(resume_file)
     if not resume_path:
         yield (
