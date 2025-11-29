@@ -8,7 +8,11 @@ from openai import OpenAI
 
 
 def nebius_client() -> OpenAI:
-    """Create a Nebius OpenAI-compatible client."""
+    """Create a Nebius OpenAI-compatible client.
+
+    Returns:
+        OpenAI: Configured Nebius client.
+    """
     api_key = os.getenv("NEBIUS_API_KEY", None)
     if api_key is None:
         raise EnvironmentError("Missing NEBIUS_API_KEY for Nebius client.")
