@@ -81,6 +81,8 @@ Our app includes the following key features:
 - **Agentic Workflow**: The app uses an agentic AI workflow to process the resume and preferences, leveraging MCP tools to search for relevant job offers and analyze resume. Then, it ranks the job offers based on how well they match the user's profile and provides a summary of the results with explanations, pros and cons.
 - **Interactive UI**: The Gradio interface provides an intuitive and user-friendly experience, displaying progress indicators and results in a clear format.
 
+> Note: The AI agents uses LLM models provided by Nebius. Make sure to set the NEBIUS_API_KEY environment variable in your .env file to use this tool.
+
 ## 📚 Why use this app?
 
 This app is designed to assist job seekers in efficiently finding job opportunities that align with their skills and preferences. By leveraging AI agents and MCP tools, the app automates the job search process, saving users time and effort while increasing the chances of finding suitable job offers.
