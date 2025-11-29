@@ -29,6 +29,9 @@ def _llm_filter_jobs(
 
     Returns:
         list[int] | None: List of indices of jobs to keep, or None on failure.
+
+    Raises:
+        Exception: If there is an error during LLM processing.
     """
     try:
         client = nebius_client()
