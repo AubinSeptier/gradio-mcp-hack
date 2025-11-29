@@ -3,12 +3,12 @@
 from __future__ import annotations
 
 import html
-import time
-from concurrent.futures import ThreadPoolExecutor
 from typing import Any
+from concurrent.futures import ThreadPoolExecutor
+from queue import Empty, Queue
 
 import gradio as gr
-from graph import build_graph
+from agents import description_node, filtering_node, profiling_node, ranking_node, researcher_node
 
 APP_CSS = """
 :root {
@@ -101,7 +101,13 @@ PROGRESS_STEPS = [
 
 _EXECUTOR = ThreadPoolExecutor(max_workers=1)
 
-GRAPH = build_graph()
+PIPELINE_NODES = [
+    profiling_node,
+    researcher_node,
+    filtering_node,
+    ranking_node,
+    description_node,
+]
 
 
 def _first(keys: list[str], data: dict[str, Any], default: str = "") -> str:
@@ -239,17 +245,26 @@ def _render_status_message(title: str, subtitle: str | None = None) -> str:
     )
 
 
-def _execute_graph(resume_path: str, preferences: dict[str, Any]) -> tuple[str, str]:
-    """Run the graph and format outputs.
+def _execute_graph(
+    resume_path: str, preferences: dict[str, Any], progress_queue: Queue | None = None
+) -> tuple[str, str]:
+    """Run the pipeline sequentially and format outputs.
 
     Args:
         resume_path (str): Path to the resume file.
         preferences (dict[str, Any]): Job search preferences.
+        progress_queue (Queue | None): Queue to report step completion to the UI.
 
     Returns:
         tuple[str, str]: Summary text and HTML for ranked jobs.
     """
-    state = GRAPH.invoke({"resume_file": resume_path, "job_preferences": preferences})
+    state: dict[str, Any] = {"resume_file": resume_path, "job_preferences": preferences}
+
+    for idx, node in enumerate(PIPELINE_NODES):
+        state = node(state)
+        if progress_queue and idx < len(PIPELINE_NODES) - 1:
+            progress_queue.put(idx + 1)
+
     ranked_jobs = state.get("job_ranked", {}).get("jobs") or []
     summary = (
         f"Found {len(ranked_jobs)} job(s) ranked by fit."
@@ -383,7 +398,7 @@ def run_pipeline(
     site_name: list[str],
     notes: str,
 ) -> Any:  # noqa: ANN401
-    """Execute the agentic graph end-to-end with a streaming progress UI.
+    """Execute the agentic pipeline end-to-end with a streaming progress UI.
 
     Args:
         resume_file (Any): Uploaded resume file.
@@ -420,17 +435,25 @@ def run_pipeline(
     if notes:
         preferences["notes"] = notes.strip()
 
-    future = _EXECUTOR.submit(_execute_graph, resume_path, preferences)
+    progress_queue: Queue = Queue()
+    future = _EXECUTOR.submit(_execute_graph, resume_path, preferences, progress_queue)
     active_idx = 0
     status_text = f"{PROGRESS_STEPS[active_idx][0]} in progress..."
     yield _render_progress(active_idx, status_text), _loading_jobs_html()
 
-    while not future.done():
-        time.sleep(0.9)
-        if active_idx < len(PROGRESS_STEPS) - 1:
-            active_idx += 1
-        status_text = f"{PROGRESS_STEPS[active_idx][0]} in progress..."
-        yield _render_progress(active_idx, status_text), _loading_jobs_html()
+    while True:
+        try:
+            next_idx = progress_queue.get(timeout=0.25)
+        except Empty:
+            next_idx = None
+
+        if isinstance(next_idx, int) and next_idx != active_idx and 0 <= next_idx < len(PROGRESS_STEPS):
+            active_idx = next_idx
+            status_text = f"{PROGRESS_STEPS[active_idx][0]} in progress..."
+            yield _render_progress(active_idx, status_text), _loading_jobs_html()
+
+        if future.done() and progress_queue.empty():
+            break
 
     try:
         summary, jobs_html = future.result()
