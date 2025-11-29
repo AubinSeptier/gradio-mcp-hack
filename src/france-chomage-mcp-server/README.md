@@ -23,6 +23,14 @@ This is our Gradio app for the **MCP's 1st Birthday** Hackathon track 1: Buildin
 This is our first MCP server project, named "France Chômage MCP Server", which aims to help job seekers in France
 (and in the whole world) by providing tools to search for jobs and analyze resumes.
 
+## 🧑‍💻 Team Members
+
+**Team Name:**: Chicout' Green Team
+
+**Team Members:**
+- **Théophile Baudry** - [@Darkensyde](https://huggingface.co/Darkensyde) - The Tireless Coder (truly tireless!)
+- **Aubin Septier** - [@Aubins](https://huggingface.co/Aubins) - The budding project "leader" (but still learning!)
+
 ## Prerequisites
 
 You need to install `poppler` to use the MCP server locally or on your own infrastructures:
@@ -115,8 +123,7 @@ Here are some limitations to be aware of:
 - LinkedIn Deep Search may take longer to retrieve results as it fetches full job descriptions.
 - The Job Search Tool relies on web scraping, which may be affected by changes in the target websites' structure.
 - The Job Search Tool does not implement all the features, filters, and options available in JobSpy. We only implemented
-  the most interesting ones from our point of view and our users' needs.
-- Look at [JobSpy documentation](https://github.com/speedyapply/JobSpy) for more details on the job search tool
+  the most interesting ones from our point of view and our users' needs. Look at [JobSpy documentation](https://github.com/speedyapply/JobSpy) for more details on the job search tool
   capabilities.
 - The Resume Extractor currently only supports resumes in PDF format and with a single page.
 
