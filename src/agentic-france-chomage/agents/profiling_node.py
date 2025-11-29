@@ -12,7 +12,14 @@ resume_extractor = load_tool("resume_extractor")
 
 # Node ----------------
 def profiling_node(state: AgentState) -> dict[str, Any]:
-    """Extract a structured profile from the provided resume file."""
+    """Extract a structured profile from the provided resume file.
+
+    Args:
+        state (AgentState): Current agent state containing the resume file path.
+
+    Returns:
+        dict[str, Any]: New agent state with extracted profile information.
+    """
     resume_file = state.get("resume_file")
     if not resume_file:
         raise ValueError("profiling_node requires a 'resume_file' path in the state.")
