@@ -105,7 +105,16 @@ GRAPH = build_graph()
 
 
 def _first(keys: list[str], data: dict[str, Any], default: str = "") -> str:
-    """Return the first non-empty value found for keys in data."""
+    """Return the first non-empty value found for keys in data.
+
+    Args:
+        keys (list[str]): List of keys to check in order.
+        data (dict[str, Any]): Dictionary to search.
+        default (str): Default value if no keys are found.
+
+    Returns:
+        str: The first non-empty string value found, or default.
+    """
     for key in keys:
         value = data.get(key)
         if isinstance(value, str) and value.strip():
@@ -114,7 +123,15 @@ def _first(keys: list[str], data: dict[str, Any], default: str = "") -> str:
 
 
 def _truncate(text: str, limit: int = 150) -> str:
-    """Word-safe truncate."""
+    """Word-safe truncate.
+
+    Args:
+        text (str): Text to truncate.
+        limit (int): Maximum length of the returned string.
+
+    Returns:
+        str: Truncated text with ellipsis if needed.
+    """
     txt = (text or "").strip()
     if len(txt) <= limit:
         return txt
@@ -123,7 +140,14 @@ def _truncate(text: str, limit: int = 150) -> str:
 
 
 def _score_meta(score: Any) -> tuple[str, str, float]:  # noqa: ANN401
-    """Return CSS class, label, and fill percent for score."""
+    """Return CSS class, label, and fill percent for score.
+
+    Args:
+        score (Any): Score value to interpret.
+
+    Returns:
+        tuple[str, str, float]: (css_class, label, fill_percent)
+    """
     try:
         val = float(score)
     except (TypeError, ValueError):
@@ -141,7 +165,16 @@ def _score_meta(score: Any) -> tuple[str, str, float]:  # noqa: ANN401
 
 
 def _render_progress(active_index: int | None, headline: str, finished: bool = False) -> str:
-    """Build the multi-step progress indicator shown in the status panel."""
+    """Build the multi-step progress indicator shown in the status panel.
+
+    Args:
+        active_index (int | None): Index of the currently active step, or None if not started.
+        headline (str): Headline text to show above the steps.
+        finished (bool): Whether the process is finished.
+
+    Returns:
+        str: HTML string for the progress card.
+    """
     safe_headline = html.escape(headline or "")
     items: list[str] = []
     for idx, (title, desc) in enumerate(PROGRESS_STEPS):
@@ -173,7 +206,11 @@ def _render_progress(active_index: int | None, headline: str, finished: bool = F
 
 
 def _loading_jobs_html() -> str:
-    """Small placeholder shown while waiting for job cards."""
+    """Small placeholder shown while waiting for job cards.
+
+    Returns:
+        str: HTML string for the loading placeholder.
+    """
     return (
         "<div class='loading-jobs'>"
         "<div class='loading-spinner'></div>"
@@ -183,7 +220,15 @@ def _loading_jobs_html() -> str:
 
 
 def _render_status_message(title: str, subtitle: str | None = None) -> str:
-    """Simple status card without progress steps."""
+    """Simple status card without progress steps.
+
+    Args:
+        title (str): Title text.
+        subtitle (str | None): Optional subtitle text.
+
+    Returns:
+        str: HTML string for the status card.
+    """
     safe_title = html.escape(title or "")
     safe_sub = html.escape(subtitle or "") if subtitle else ""
     return (
@@ -195,7 +240,15 @@ def _render_status_message(title: str, subtitle: str | None = None) -> str:
 
 
 def _execute_graph(resume_path: str, preferences: dict[str, Any]) -> tuple[str, str]:
-    """Run the graph and format outputs."""
+    """Run the graph and format outputs.
+
+    Args:
+        resume_path (str): Path to the resume file.
+        preferences (dict[str, Any]): Job search preferences.
+
+    Returns:
+        tuple[str, str]: Summary text and HTML for ranked jobs.
+    """
     state = GRAPH.invoke({"resume_file": resume_path, "job_preferences": preferences})
     ranked_jobs = state.get("job_ranked", {}).get("jobs") or []
     summary = (
@@ -208,7 +261,14 @@ def _execute_graph(resume_path: str, preferences: dict[str, Any]) -> tuple[str, 
 
 
 def _format_jobs_html(jobs: list[dict[str, Any]]) -> str:
-    """Render ranked jobs as interactive HTML cards."""
+    """Render ranked jobs as interactive HTML cards.
+
+    Args:
+        jobs (list[dict[str, Any]]): List of job dictionaries.
+
+    Returns:
+        str: HTML string containing job cards.
+    """
     if not jobs:
         return "<div class='empty-state'>No job matches returned yet.</div>"
 
@@ -297,7 +357,14 @@ def _format_jobs_html(jobs: list[dict[str, Any]]) -> str:
 
 
 def _normalize_filepath(upload: Any) -> str | None:  # noqa: ANN401
-    """Accept string paths or file-like objects from Gradio."""
+    """Accept string paths or file-like objects from Gradio.
+
+    Args:
+        upload (Any): Uploaded file input.
+
+    Returns:
+        str | None: File path as string, or None if not provided.
+    """
     if upload is None:
         return None
     if isinstance(upload, str):
