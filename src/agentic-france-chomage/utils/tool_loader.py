@@ -29,6 +29,9 @@ def load_tool(tool_name: str) -> Any:  # noqa: ANN401
 
     Returns:
         Any: The imported tool callable.
+
+    Raises:
+        ImportError: If the tool cannot be imported.
     """
     _ensure_tools_on_path()
     try:
