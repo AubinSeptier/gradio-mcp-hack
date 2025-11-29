@@ -21,7 +21,15 @@ class SearchTerms(BaseModel):
 
 # Helpers -------------
 def _guess_search_terms(profile: dict[str, Any], preferences: dict[str, Any]) -> tuple[str, str]:
-    """Use Nebius LLM to propose search terms."""
+    """Use a LLM to propose search terms.
+
+    Args:
+        profile (dict[str, Any]): Extracted candidate profile information.
+        preferences (dict[str, Any]): Candidate job preferences.
+
+    Returns:
+        tuple[str, str]: (search_term, google_search_term)
+    """
     client = nebius_client()
     system_prompt = (
         "You craft concise job search queries. Those queries will be"
@@ -54,7 +62,14 @@ def _guess_search_terms(profile: dict[str, Any], preferences: dict[str, Any]) ->
 
 # Node -----------------
 def researcher_node(state: AgentState) -> dict[str, Any]:
-    """Search for jobs based on the extracted profile and preferences."""
+    """Search for jobs based on the extracted profile and preferences.
+
+    Args:
+        state (AgentState): Current agent state containing candidate info.
+
+    Returns:
+        dict[str, Any]: New agent state with job search results.
+    """
     profile = state.get("profil_extracted") or {}
     preferences = state.get("job_preferences") or {}
     search_term, google_search_term = _guess_search_terms(profile, preferences)
