@@ -11,6 +11,8 @@ from utils import nebius_client
 
 
 class JobDescription(BaseModel):
+    """Model for a single job description item."""
+
     index: int
     summary: str = Field(..., description="2-3 sentences describing the role for this candidate")
     positives: list[str] = Field(default_factory=list, description="Positive fit bullets")
@@ -18,6 +20,8 @@ class JobDescription(BaseModel):
 
 
 class DescriptionResult(BaseModel):
+    """Model for the LLM response containing job descriptions."""
+
     descriptions: list[JobDescription]
 
 
@@ -27,7 +31,16 @@ def _llm_describe_jobs(
     profile: dict[str, Any],
     preferences: dict[str, Any],
 ) -> list[JobDescription] | None:
-    """Ask Nebius LLM for per-job summaries/positives/negatives."""
+    """Ask an LLM for per-job summaries/positives/negatives.
+
+    Args:
+        jobs (list[dict[str, Any]]): List of job dicts to describe.
+        profile (dict[str, Any]): Extracted candidate profile information.
+        preferences (dict[str, Any]): Candidate job preferences.
+
+    Returns:
+        list[JobDescription] | None: List of JobDescription instances or None on failure.
+    """
     try:
         client = nebius_client()
         system_prompt = (
@@ -71,7 +84,14 @@ def _llm_describe_jobs(
 
 # Node -----------------
 def description_node(state: AgentState) -> dict[str, Any]:
-    """Attach concise candidate-focused descriptions to ranked jobs."""
+    """Attach concise candidate-focused descriptions to ranked jobs.
+
+    Args:
+        state (AgentState): Current agent state containing ranked jobs and candidate info.
+
+    Returns:
+        dict[str, Any]: New agent state with job descriptions added.
+    """
     profile = state.get("profil_extracted") or {}
     preferences = state.get("job_preferences") or {}
     ranked = state.get("job_ranked") or {}
