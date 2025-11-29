@@ -40,6 +40,9 @@ def _llm_rank_jobs(
 
     Returns:
         list[dict[str, Any]]: List of job dicts with added 'score' field.
+
+    Raises:
+        Exception: If there is an error during LLM processing.
     """
     try:
         client = nebius_client()
