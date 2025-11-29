@@ -45,7 +45,7 @@ def _llm_filter_jobs(
             ],
             response_format=FilteringResult,
             temperature=0.15,
-            max_tokens=200,
+            max_tokens=8192,
         )
         message = response.choices[0].message
         parsed = (

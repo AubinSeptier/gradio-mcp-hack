@@ -44,7 +44,7 @@ def _guess_search_terms(profile: dict[str, Any], preferences: dict[str, Any]) ->
             ],
             response_format=SearchTerms,
             temperature=0.2,
-            max_tokens=120,
+            max_tokens=2048,
         )
         message = response.choices[0].message
         parsed = (
@@ -68,8 +68,7 @@ def researcher_node(state: AgentState) -> dict[str, Any]:
     site_name = preferences.get("site_name") or ["linkedin", "indeed"]
     location = preferences.get("location") or "France"
     distance_km = preferences.get("distance_km") or 30
-    job_type = preferences.get("job_type") or ["fulltime"]
-    job_type = job_type if isinstance(job_type, list) else [job_type]
+    job_type = preferences.get("job_type") or "fulltime"
     is_remote = bool(preferences.get("is_remote", False))
     results_wanted = int(preferences.get("results_wanted", 10))
     hours_old = int(preferences.get("hours_old", 72))

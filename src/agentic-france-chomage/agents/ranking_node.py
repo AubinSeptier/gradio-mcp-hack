@@ -52,7 +52,7 @@ def _llm_rank_jobs(
             ],
             response_format=RankingResult,
             temperature=0.2,
-            max_tokens=240,
+            max_tokens=8192,
         )
         message = response.choices[0].message
         parsed = (
