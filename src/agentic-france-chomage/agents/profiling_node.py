@@ -19,6 +19,9 @@ def profiling_node(state: AgentState) -> dict[str, Any]:
 
     Returns:
         dict[str, Any]: New agent state with extracted profile information.
+
+    Raises:
+        ValueError: If the 'resume_file' path is not present in the state.
     """
     resume_file = state.get("resume_file")
     if not resume_file:
