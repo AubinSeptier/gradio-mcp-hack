@@ -1,29 +1,35 @@
-"""
-Agent node that builds search queries from a profile and preferences,
-then calls the job search MCP tool.
-"""
+"""Agent node that builds search queries from a profile and preferences, then calls the job search MCP tool."""
 
 from __future__ import annotations
 
 import json
 from typing import Any
 
-from pydantic import BaseModel
 from graph import AgentState
+from pydantic import BaseModel
 from utils import load_tool, nebius_client
 
 job_search_tool = load_tool("job_search_tool")
 
 
 class SearchTerms(BaseModel):
+    """Result structure for search terms."""
+
     search_term: str
     google_search_term: str
 
 
 # Helpers -------------
 def _guess_search_terms(profile: dict[str, Any], preferences: dict[str, Any]) -> tuple[str, str]:
-    """Use Nebius LLM to propose search terms."""
-    
+    """Use a LLM to propose search terms.
+
+    Args:
+        profile (dict[str, Any]): Extracted candidate profile information.
+        preferences (dict[str, Any]): Candidate job preferences.
+
+    Returns:
+        tuple[str, str]: (search_term, google_search_term)
+    """
     client = nebius_client()
     system_prompt = (
         "You craft concise job search queries. Those queries will be"
@@ -47,10 +53,7 @@ def _guess_search_terms(profile: dict[str, Any], preferences: dict[str, Any]) ->
             max_tokens=2048,
         )
         message = response.choices[0].message
-        parsed = (
-            getattr(message, "parsed", None)
-            or SearchTerms.model_validate_json((message.content or "{}").strip())
-        )
+        parsed = getattr(message, "parsed", None) or SearchTerms.model_validate_json((message.content or "{}").strip())
         return parsed.search_term.strip(), parsed.google_search_term.strip()
 
     except Exception:
@@ -59,8 +62,14 @@ def _guess_search_terms(profile: dict[str, Any], preferences: dict[str, Any]) ->
 
 # Node -----------------
 def researcher_node(state: AgentState) -> dict[str, Any]:
-    """Search for jobs based on the extracted profile and preferences."""
-    
+    """Search for jobs based on the extracted profile and preferences.
+
+    Args:
+        state (AgentState): Current agent state containing candidate info.
+
+    Returns:
+        dict[str, Any]: New agent state with job search results.
+    """
     profile = state.get("profil_extracted") or {}
     preferences = state.get("job_preferences") or {}
     search_term, google_search_term = _guess_search_terms(profile, preferences)

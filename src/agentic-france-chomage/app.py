@@ -4,11 +4,10 @@ from __future__ import annotations
 
 import html
 import time
-from typing import Any
 from concurrent.futures import ThreadPoolExecutor
+from typing import Any
 
 import gradio as gr
-
 from graph import build_graph
 
 APP_CSS = """
@@ -90,7 +89,7 @@ details[open] .summary-action::before {content: "–";}
 @keyframes spin {to {transform: rotate(360deg);}}
 @keyframes pulseDot {0% {transform: scale(1);} 50% {transform: scale(1.16);} 100% {transform: scale(1);}}
 @keyframes fadeIn {from {opacity: 0; transform: translateY(4px);} to {opacity: 1; transform: translateY(0);}}
-"""
+"""  # noqa: E501
 
 PROGRESS_STEPS = [
     ("Profiling", "Understanding your resume"),
@@ -106,7 +105,16 @@ GRAPH = build_graph()
 
 
 def _first(keys: list[str], data: dict[str, Any], default: str = "") -> str:
-    """Return the first non-empty value found for keys in data."""
+    """Return the first non-empty value found for keys in data.
+
+    Args:
+        keys (list[str]): List of keys to check in order.
+        data (dict[str, Any]): Dictionary to search.
+        default (str): Default value if no keys are found.
+
+    Returns:
+        str: The first non-empty string value found, or default.
+    """
     for key in keys:
         value = data.get(key)
         if isinstance(value, str) and value.strip():
@@ -115,7 +123,15 @@ def _first(keys: list[str], data: dict[str, Any], default: str = "") -> str:
 
 
 def _truncate(text: str, limit: int = 150) -> str:
-    """Word-safe truncate."""
+    """Word-safe truncate.
+
+    Args:
+        text (str): Text to truncate.
+        limit (int): Maximum length of the returned string.
+
+    Returns:
+        str: Truncated text with ellipsis if needed.
+    """
     txt = (text or "").strip()
     if len(txt) <= limit:
         return txt
@@ -123,8 +139,15 @@ def _truncate(text: str, limit: int = 150) -> str:
     return cut + "..."
 
 
-def _score_meta(score: Any) -> tuple[str, str, float]:
-    """Return CSS class, label, and fill percent for score."""
+def _score_meta(score: Any) -> tuple[str, str, float]:  # noqa: ANN401
+    """Return CSS class, label, and fill percent for score.
+
+    Args:
+        score (Any): Score value to interpret.
+
+    Returns:
+        tuple[str, str, float]: (css_class, label, fill_percent)
+    """
     try:
         val = float(score)
     except (TypeError, ValueError):
@@ -142,7 +165,16 @@ def _score_meta(score: Any) -> tuple[str, str, float]:
 
 
 def _render_progress(active_index: int | None, headline: str, finished: bool = False) -> str:
-    """Build the multi-step progress indicator shown in the status panel."""
+    """Build the multi-step progress indicator shown in the status panel.
+
+    Args:
+        active_index (int | None): Index of the currently active step, or None if not started.
+        headline (str): Headline text to show above the steps.
+        finished (bool): Whether the process is finished.
+
+    Returns:
+        str: HTML string for the progress card.
+    """
     safe_headline = html.escape(headline or "")
     items: list[str] = []
     for idx, (title, desc) in enumerate(PROGRESS_STEPS):
@@ -168,15 +200,17 @@ def _render_progress(active_index: int | None, headline: str, finished: bool = F
     return (
         "<div class='progress-card'>"
         f"<div class='progress-head'>{safe_headline}</div>"
-        "<ul class='progress-steps'>"
-        + "".join(items)
-        + "</ul>"
+        "<ul class='progress-steps'>" + "".join(items) + "</ul>"
         "</div>"
     )
 
 
 def _loading_jobs_html() -> str:
-    """Small placeholder shown while waiting for job cards."""
+    """Small placeholder shown while waiting for job cards.
+
+    Returns:
+        str: HTML string for the loading placeholder.
+    """
     return (
         "<div class='loading-jobs'>"
         "<div class='loading-spinner'></div>"
@@ -186,7 +220,15 @@ def _loading_jobs_html() -> str:
 
 
 def _render_status_message(title: str, subtitle: str | None = None) -> str:
-    """Simple status card without progress steps."""
+    """Simple status card without progress steps.
+
+    Args:
+        title (str): Title text.
+        subtitle (str | None): Optional subtitle text.
+
+    Returns:
+        str: HTML string for the status card.
+    """
     safe_title = html.escape(title or "")
     safe_sub = html.escape(subtitle or "") if subtitle else ""
     return (
@@ -198,7 +240,15 @@ def _render_status_message(title: str, subtitle: str | None = None) -> str:
 
 
 def _execute_graph(resume_path: str, preferences: dict[str, Any]) -> tuple[str, str]:
-    """Run the graph and format outputs."""
+    """Run the graph and format outputs.
+
+    Args:
+        resume_path (str): Path to the resume file.
+        preferences (dict[str, Any]): Job search preferences.
+
+    Returns:
+        tuple[str, str]: Summary text and HTML for ranked jobs.
+    """
     state = GRAPH.invoke({"resume_file": resume_path, "job_preferences": preferences})
     ranked_jobs = state.get("job_ranked", {}).get("jobs") or []
     summary = (
@@ -211,7 +261,14 @@ def _execute_graph(resume_path: str, preferences: dict[str, Any]) -> tuple[str, 
 
 
 def _format_jobs_html(jobs: list[dict[str, Any]]) -> str:
-    """Render ranked jobs as interactive HTML cards."""
+    """Render ranked jobs as interactive HTML cards.
+
+    Args:
+        jobs (list[dict[str, Any]]): List of job dictionaries.
+
+    Returns:
+        str: HTML string containing job cards.
+    """
     if not jobs:
         return "<div class='empty-state'>No job matches returned yet.</div>"
 
@@ -219,7 +276,9 @@ def _format_jobs_html(jobs: list[dict[str, Any]]) -> str:
     for job in jobs:
         title = html.escape(_first(["title", "job_title", "role", "position"], job, "Role not provided"))
         company = html.escape(_first(["company", "company_name", "employer_name"], job, "Unknown company"))
-        location = html.escape(_first(["location", "formatted_location", "city", "country"], job, "Location not provided"))
+        location = html.escape(
+            _first(["location", "formatted_location", "city", "country"], job, "Location not provided")
+        )
         rank = html.escape(str(job.get("rank") or "?"))
         link = _first(["job_url", "url", "link", "apply_link"], job, "")
         score_cls, score_label, score_fill = _score_meta(job.get("score"))
@@ -297,8 +356,15 @@ def _format_jobs_html(jobs: list[dict[str, Any]]) -> str:
     return "<div class='jobs-grid'>" + "".join(cards) + "</div>"
 
 
-def _normalize_filepath(upload: Any) -> str | None:
-    """Accept string paths or file-like objects from Gradio."""
+def _normalize_filepath(upload: Any) -> str | None:  # noqa: ANN401
+    """Accept string paths or file-like objects from Gradio.
+
+    Args:
+        upload (Any): Uploaded file input.
+
+    Returns:
+        str | None: File path as string, or None if not provided.
+    """
     if upload is None:
         return None
     if isinstance(upload, str):
@@ -307,7 +373,7 @@ def _normalize_filepath(upload: Any) -> str | None:
 
 
 def run_pipeline(
-    resume_file: Any,
+    resume_file: Any,  # noqa: ANN401
     location: str,
     distance_km: float,
     job_type: str,
@@ -316,11 +382,29 @@ def run_pipeline(
     hours_old: int,
     site_name: list[str],
     notes: str,
-) -> Any:
-    """Execute the agentic graph end-to-end with a streaming progress UI."""
+) -> Any:  # noqa: ANN401
+    """Execute the agentic graph end-to-end with a streaming progress UI.
+
+    Args:
+        resume_file (Any): Uploaded resume file.
+        location (str): Preferred job location.
+        distance_km (float): Search radius in kilometers.
+        job_type (str): Type of job to search for.
+        is_remote (bool): Whether to include remote jobs.
+        results_wanted (int): Maximum results per site.
+        hours_old (int): Posted within this many hours.
+        site_name (list[str]): List of job boards to search.
+        notes (str): Extra user preferences.
+
+    Yields:
+        Any: Generator yielding status and matches HTML.
+    """
     resume_path = _normalize_filepath(resume_file)
     if not resume_path:
-        yield _render_status_message("Please upload a PDF resume to start the search."), "<div class='empty-state'>Waiting for input...</div>"
+        yield (
+            _render_status_message("Please upload a PDF resume to start the search."),
+            "<div class='empty-state'>Waiting for input...</div>",
+        )
         return
 
     preferences = {
@@ -351,7 +435,10 @@ def run_pipeline(
     try:
         summary, jobs_html = future.result()
     except Exception as exc:
-        yield _render_status_message("Job matching failed", str(exc)), "<div class='empty-state'>Could not retrieve jobs.</div>"
+        yield (
+            _render_status_message("Job matching failed", str(exc)),
+            "<div class='empty-state'>Could not retrieve jobs.</div>",
+        )
         return
 
     yield _render_status_message(summary, "Adjust filters and rerun to refine results."), jobs_html

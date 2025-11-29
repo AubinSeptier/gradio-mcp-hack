@@ -1,35 +1,44 @@
-"""
-Agent node that filters irrelevant or not higly relevant jobs from
-job_search_results to produce job_filtered.
-"""
+"""Agent node that filters irrelevant or not higly relevant jobs from job_search_results to produce job_filtered."""
 
 from __future__ import annotations
 
 import json
 from typing import Any
 
-from pydantic import BaseModel
 from graph import AgentState
+from pydantic import BaseModel
 from utils import nebius_client
 
 
 class FilteringResult(BaseModel):
+    """Result structure for filtering job indices to keep."""
+
     keep_indices: list[int]
 
 
 # Helpers -------------
 def _llm_filter_jobs(
-    jobs: list[dict[str, Any]], 
-    profile: dict[str, Any], 
-    preferences: dict[str, Any]
+    jobs: list[dict[str, Any]], profile: dict[str, Any], preferences: dict[str, Any]
 ) -> list[int] | None:
-    """Ask Nebius LLM which jobs to keep; returns indices to keep or None on failure."""
+    """Ask a LLM which jobs to keep; returns indices to keep or None on failure.
+
+    Args:
+        jobs (list[dict[str, Any]]): List of job dicts to filter.
+        profile (dict[str, Any]): Extracted candidate profile information.
+        preferences (dict[str, Any]): Candidate job preferences.
+
+    Returns:
+        list[int] | None: List of indices of jobs to keep, or None on failure.
+
+    Raises:
+        Exception: If there is an error during LLM processing.
+    """
     try:
         client = nebius_client()
         system_prompt = (
             "You select relevant job offers for a candidate. "
             "Consider skills, experiences, location, and other preferences. "
-            "Return JSON: {\"keep_indices\": [int, ...]} using the provided job indices."
+            'Return JSON: {"keep_indices": [int, ...]} using the provided job indices.'
         )
         jobs_with_indices = [{**job, "index": idx} for idx, job in enumerate(jobs)]
         user_payload = {
@@ -48,9 +57,8 @@ def _llm_filter_jobs(
             max_tokens=8192,
         )
         message = response.choices[0].message
-        parsed = (
-            getattr(message, "parsed", None)
-            or FilteringResult.model_validate_json((message.content or "{}").strip())
+        parsed = getattr(message, "parsed", None) or FilteringResult.model_validate_json(
+            (message.content or "{}").strip()
         )
         keep = [i for i in parsed.keep_indices if 0 <= i < len(jobs)]
         return keep
@@ -58,15 +66,22 @@ def _llm_filter_jobs(
         print(f"Error in _llm_filter_jobs: {e}")
         raise
 
+
 # Node -----------------
 def filtering_node(state: AgentState) -> dict[str, Any]:
-    """Filter job results using Nebius LLM."""
+    """Filter job results using a LLM.
 
+    Args:
+        state (AgentState): Current agent state containing job search results and candidate info.
+
+    Returns:
+        dict: New agent state with filtered job results.
+    """
     preferences = state.get("job_preferences") or {}
     profile = state.get("profil_extracted") or {}
     job_results = state.get("job_search_results") or []
     jobs: list[dict[str, Any]]
-    if isinstance(job_results, dict): # metadata about the search could be added later
+    if isinstance(job_results, dict):  # metadata about the search could be added later
         jobs = job_results.get("jobs") or []
     else:
         jobs = job_results
