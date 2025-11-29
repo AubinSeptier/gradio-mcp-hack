@@ -31,7 +31,16 @@ def _llm_rank_jobs(
     profile: dict[str, Any],
     preferences: dict[str, Any],
 ) -> list[dict[str, Any]]:
-    """Ask Nebius LLM to score jobs; returns jobs with scores (NA when missing)."""
+    """Ask a LLM to score jobs; returns jobs with scores (NA when missing).
+
+    Args:
+        jobs (list[dict[str, Any]]): List of job dicts to rank.
+        profile (dict[str, Any]): Extracted candidate profile information.
+        preferences (dict[str, Any]): Candidate job preferences.
+
+    Returns:
+        list[dict[str, Any]]: List of job dicts with added 'score' field.
+    """
     try:
         client = nebius_client()
         system_prompt = (
@@ -79,7 +88,14 @@ def _llm_rank_jobs(
 
 # Node -----------------
 def ranking_node(state: AgentState) -> dict[str, Any]:
-    """Rank filtered jobs with Nebius LLM; mark missing scores as N/A."""
+    """Rank filtered jobs with Nebius LLM; mark missing scores as N/A.
+
+    Args:
+        state (AgentState): Current agent state containing filtered job results and candidate info.
+
+    Returns:
+        dict[str, Any]: New agent state with ranked job results.
+    """
     preferences = state.get("job_preferences") or {}
     profile = state.get("profil_extracted") or {}
     job_source = state.get("job_filtered") or state.get("job_search_results") or {}
