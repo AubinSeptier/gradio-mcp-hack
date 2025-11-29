@@ -55,7 +55,7 @@ def _llm_filter_jobs(
         keep = [i for i in parsed.keep_indices if 0 <= i < len(jobs)]
         return keep
     except Exception as e:
-        print(f"Erreur dans _llm_filter_jobs: {e}")
+        print(f"Error in _llm_filter_jobs: {e}")
         raise
 
 # Node -----------------

@@ -67,7 +67,7 @@ def _llm_rank_jobs(
             if 0 <= idx < len(jobs):
                 mapping[idx] = sc
     except Exception as e:
-        print(f"Erreur dans _llm_rank_jobs: {e}")
+        print(f"Error in _llm_rank_jobs: {e}")
         raise
 
     scored_jobs: list[dict[str, Any]] = []
