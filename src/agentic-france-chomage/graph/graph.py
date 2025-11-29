@@ -16,7 +16,7 @@ def build_graph() -> Any:  # noqa: ANN401
     Profiling -> Researcher -> Filtering -> Ranking
 
     Returns:
-        Compiled StateGraph instance.
+        Any: Compiled StateGraph instance.
     """
     workflow = StateGraph(AgentState)
 
