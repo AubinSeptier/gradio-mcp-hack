@@ -21,6 +21,14 @@ tags:
 
 This is our first agentic AI project, named "France Chômage", which aims to assist users in finding job offers in France (and in the whole world) by leveraging an agentic AI wokflow and MCP tools.
 
+Here our LinkedIn posts about the project:
+- [Aubin's post](https://www.linkedin.com/posts/aubin-septier-aa0491294_agentic-matcher-ai-powered-job-search-activity-7401015179922153472-fFAp?utm_source=share&utm_medium=member_desktop&rcm=ACoAAEdDFdgBU4LxE7dS7muTQr-j7D4E24hG-p0)
+- [Théophile's post](https://www.linkedin.com/posts/theophile-baudry_agentic-matcher-ai-powered-job-search-activity-7401015193650225152-83rq?utm_source=share&utm_medium=member_desktop&rcm=ACoAAEdDFdgBU4LxE7dS7muTQr-j7D4E24hG-p0)
+
+The Youtube video demo of the app is available here: [YouTube Video](https://www.youtube.com/watch?v=Spc6oykNFuQ)
+
+The other MCP server HF Space providing the MCP tools used by this app is available here: [France Chômage - MCP Server](https://huggingface.co/spaces/MCP-1st-Birthday/France-Chomage-MCP-Server)
+
 ## 🧑‍💻 Team Members
 
 **Team Name:**: Chicout' Green Team
