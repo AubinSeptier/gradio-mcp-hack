@@ -27,7 +27,7 @@ Here our LinkedIn posts about the project:
 
 The Youtube video demo of the app is available here: [YouTube Video](https://www.youtube.com/watch?v=Spc6oykNFuQ)
 
-The other MCP server HF Space providing the MCP tools used by this app is available here: [France Chômage - MCP Server](https://huggingface.co/spaces/MCP-1st-Birthday/France-Chomage-MCP-Server)
+The other MCP server HF Space showing the MCP tools used by this app is available here: [France Chômage - MCP Server](https://huggingface.co/spaces/MCP-1st-Birthday/France-Chomage-MCP-Server)
 
 ## 🧑‍💻 Team Members
 
