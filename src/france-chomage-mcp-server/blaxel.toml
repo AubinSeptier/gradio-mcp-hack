@@ -1,0 +1,10 @@
+# Blaxel configuration file for deployment
+name = "france-chomage-mcp-server"
+workspace = "aubins"
+type = "function"
+
+[runtime]
+transport = "http-stream"
+
+[triggers.configuration]
+authenticationType = "private"

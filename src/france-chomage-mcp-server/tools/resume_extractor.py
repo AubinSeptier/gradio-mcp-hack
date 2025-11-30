@@ -6,7 +6,7 @@ import os
 from io import BytesIO
 
 from openai import OpenAI
-from pdf2image import convert_from_path
+from pdf2image import convert_from_bytes, convert_from_path
 from pydantic import BaseModel, Field
 
 
@@ -36,7 +36,7 @@ class ResumeData(BaseModel):
     others: list[str] = Field(..., description="Other relevant information")
 
 
-def pdf_to_base64(pdf_path: str) -> str:
+def _pdf_to_base64(pdf_path: str) -> str:
     """Convert PDF file to base64 encoded string.
 
     Args:
@@ -82,13 +82,26 @@ def resume_extractor(resume_file: str) -> dict:
     - description (str): Brief description of the experience.
 
     Args:
-        resume_file (str): Path to the resume file (PDF format).
+        resume_file (str): Path to the resume file (PDF format) or  base64 data URI.
 
     Returns:
         dict: Extracted information from the resume in JSON format based on ResumeData model.
     """
     try:
-        resume_base64 = pdf_to_base64(resume_file)
+        if resume_file.startswith("data:application/pdf;base64,"):
+            base64_data = resume_file.split(",", 1)[1]
+            pdf_bytes = base64.b64decode(base64_data)
+            image = convert_from_bytes(pdf_bytes, first_page=1, last_page=1)
+
+            if not image:
+                raise ValueError("Could not convert PDF bytes to image.")
+
+            buffered = BytesIO()
+            image[0].save(buffered, format="JPEG", quality=90)
+            resume_base64 = base64.b64encode(buffered.getvalue()).decode("utf-8")
+
+        else:
+            resume_base64 = _pdf_to_base64(resume_file)
     except ValueError as e:
         return {"error": f"Failed to process resume file: {e}"}
 
