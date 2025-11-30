@@ -46,8 +46,13 @@ class BlaxelToolWrapper:
             Any: The tool's response, parsed from JSON if applicable.
 
         Raises:
+            TypeError: If no arguments are provided or if positional arguments are used.
             RuntimeError: If the remote tool call fails.
         """
+        if not kwargs and not args:
+            msg = f"Tool '{self.tool_name}' requires at least one argument."
+            raise TypeError(msg)
+
         if args:
             msg = f"Blaxel MCP tool '{self.tool_name}' does not support positional arguments."
             raise TypeError(msg)
@@ -57,7 +62,7 @@ class BlaxelToolWrapper:
             "method": "tools/call",
             "params": {
                 "name": self.tool_name,
-                "args": kwargs,
+                "arguments": kwargs,
             },
             "id": 1,
         }
