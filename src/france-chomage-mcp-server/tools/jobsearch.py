@@ -9,7 +9,7 @@ def job_search_tool(
     google_search_term: str,
     location: str,
     distance: int,
-    job_type: list,
+    job_type: str,
     is_remote: bool,
     results_wanted: int,
     hours_old: int,
