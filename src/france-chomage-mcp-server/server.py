@@ -3,7 +3,8 @@
 import os
 
 from mcp.server.fastmcp import FastMCP
-from tools import job_search_tool, resume_extractor
+from tools import job_search_tool as job_search_mcp_tool
+from tools.resume_extractor import resume_extractor as resume_extractor_mcp_tool
 
 mcp = FastMCP(
     "France Chômage MCP Server",
@@ -17,7 +18,7 @@ mcp = FastMCP(
 
 
 @mcp.tool()
-def job_search_mcp_tool(
+def job_search_tool(
     site_name: list | str,
     search_term: str,
     google_search_term: str,
@@ -46,7 +47,7 @@ def job_search_mcp_tool(
     Returns:
         dict: A dict containing of the retrieved job informations.
     """
-    return job_search_tool(
+    return job_search_mcp_tool(
         site_name,
         search_term,
         google_search_term,
@@ -61,7 +62,7 @@ def job_search_mcp_tool(
 
 
 @mcp.tool()
-def resume_extractor_mcp_tool(resume_file: str) -> dict:
+def resume_extractor(resume_file: str) -> dict:
     """Extract relevant information from a resume using a VLM.
 
     The return dict contains the following fields (ResumeData model):
@@ -90,7 +91,7 @@ def resume_extractor_mcp_tool(resume_file: str) -> dict:
     Returns:
         dict: Extracted information from the resume in JSON format based on ResumeData model.
     """
-    return resume_extractor(resume_file)
+    return resume_extractor_mcp_tool(resume_file)
 
 
 if __name__ == "__main__":
