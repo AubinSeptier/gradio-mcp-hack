@@ -22,6 +22,14 @@ This is our Gradio app for the **MCP's 1st Birthday** Hackathon track 1: Buildin
 This is our first MCP server project, named "France Chômage MCP Server", which aims to help job seekers in France
 (and in the whole world) by providing tools to search for jobs and analyze resumes.
 
+Here our LinkedIn posts about the project:
+- [Aubin's post](https://www.linkedin.com/posts/aubin-septier-aa0491294_agentic-matcher-ai-powered-job-search-activity-7401015179922153472-fFAp?utm_source=share&utm_medium=member_desktop&rcm=ACoAAEdDFdgBU4LxE7dS7muTQr-j7D4E24hG-p0)
+- [Théophile's post](https://www.linkedin.com/posts/theophile-baudry_agentic-matcher-ai-powered-job-search-activity-7401015193650225152-83rq?utm_source=share&utm_medium=member_desktop&rcm=ACoAAEdDFdgBU4LxE7dS7muTQr-j7D4E24hG-p0)
+
+The Youtube video demo of the app is available here: [YouTube Video](https://www.youtube.com/watch?v=Spc6oykNFuQ)
+
+The other agentic app HF Space is available here: [France Chômage - Agentic App](https://huggingface.co/spaces/MCP-1st-Birthday/France-Chomage-App)
+
 ## 🧑‍💻 Team Members
 
 **Team Name:**: Chicout' Green Team
