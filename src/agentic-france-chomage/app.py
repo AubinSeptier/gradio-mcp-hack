@@ -3,9 +3,9 @@
 from __future__ import annotations
 
 import html
-from typing import Any
 from concurrent.futures import ThreadPoolExecutor
 from queue import Empty, Queue
+from typing import Any
 
 import gradio as gr
 from agents import description_node, filtering_node, profiling_node, ranking_node, researcher_node
