@@ -1,4 +1,4 @@
-# Start from a base Python image
+# Dockerfile for France Chomage MCP Server deployment on Blaxel AI
 FROM python:3.12-slim
 
 # Set working directory
