@@ -85,6 +85,8 @@ class BlaxelToolWrapper:
                 )
                 response.raise_for_status()
 
+                print(f"Response text: {response.text}")
+
                 sse_data = self._parse_sse_response(response.text)
 
                 if not sse_data:

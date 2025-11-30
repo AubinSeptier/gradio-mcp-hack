@@ -98,4 +98,6 @@ def researcher_node(state: AgentState) -> dict[str, Any]:
 
     new_state = dict(state)
     new_state["job_search_results"] = jobs
+    print(f"researcher_node found {len(jobs)} jobs.")
+    print(jobs)
     return new_state
