@@ -82,13 +82,17 @@ def resume_extractor(resume_file: str) -> dict:
     - description (str): Brief description of the experience.
 
     Args:
-        resume_file (str): Path to the resume file (PDF format).
+        resume_file (str): Path to the resume file (PDF format) or  base64 data URI.
 
     Returns:
         dict: Extracted information from the resume in JSON format based on ResumeData model.
     """
     try:
-        resume_base64 = pdf_to_base64(resume_file)
+        if resume_file.startswith("data:application/pdf;base64,"):
+            base64_data = resume_file.split(",", 1)[1]
+            resume_base64 = base64_data
+        else:
+            resume_base64 = pdf_to_base64(resume_file)
     except ValueError as e:
         return {"error": f"Failed to process resume file: {e}"}
 
