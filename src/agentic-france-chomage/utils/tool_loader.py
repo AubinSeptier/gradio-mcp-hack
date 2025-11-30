@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import base64
 import json
 import os
 import sys
@@ -57,12 +58,14 @@ class BlaxelToolWrapper:
             msg = f"Blaxel MCP tool '{self.tool_name}' does not support positional arguments."
             raise TypeError(msg)
 
+        processed_kwargs = self._processed_file_arguments(kwargs)
+
         payload = {
             "jsonrpc": "2.0",
             "method": "tools/call",
             "params": {
                 "name": self.tool_name,
-                "arguments": kwargs,
+                "arguments": processed_kwargs,
             },
             "id": 1,
         }
@@ -147,6 +150,36 @@ class BlaxelToolWrapper:
                 except json.JSONDecodeError:
                     continue
         return {}
+
+    def _processed_file_arguments(self, kwargs: dict) -> dict:
+        """Process arguments to convert local file paths to base64 for remote execution.
+
+        Args:
+            kwargs (dict): The original keyword arguments.
+
+        Returns:
+            dict: The processed keyword arguments with file contents in base64.
+        """
+        processed = {}
+
+        for key, value in kwargs.items():
+            if isinstance(value, str) and any(
+                pattern in key.lower() for pattern in ["file", "path", "document", "pdf", "image"]
+            ):
+                if Path(value).is_file():
+                    try:
+                        with open(value, "rb") as f:
+                            file_content = f.read()
+                            base64_content = base64.b64encode(file_content).decode("utf-8")
+                            processed[key] = f"data:application/pdf;base64,{base64_content}"
+                    except Exception:
+                        processed[key] = value
+                else:
+                    processed[key] = value
+            else:
+                processed[key] = value
+
+        return processed
 
 
 def _ensure_tools_on_path() -> Path:
