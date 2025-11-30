@@ -27,7 +27,7 @@ def profiling_node(state: AgentState) -> dict[str, Any]:
     if not resume_file:
         raise ValueError("profiling_node requires a 'resume_file' path in the state.")
 
-    extracted_profile = resume_extractor(resume_file)
+    extracted_profile = resume_extractor(resume_file=resume_file)
 
     new_state = dict(state)
     new_state["profil_extracted"] = extracted_profile
