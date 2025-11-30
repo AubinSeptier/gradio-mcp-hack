@@ -9,7 +9,10 @@ from importlib import import_module
 from pathlib import Path
 from typing import Any
 
+import dotenv
 import httpx
+
+dotenv.load_dotenv()
 
 BLAXEL_BASE_URL = os.getenv("BLAXEL_BASE_URL", "https://run.blaxel.ai")
 BLAXEL_WORKSPACE = os.getenv("BLAXEL_WORKSPACE")
@@ -32,11 +35,20 @@ class BlaxelToolWrapper:
         self.mcp_url = mcp_url
         self.access_token = access_token
 
-    def __call__(self, **kwargs: Any) -> Any:  # noqa: ANN401
+        # A simple request to verify connectivity
+        try:
+            with httpx.Client(timeout=BLAXEL_TIMEOUT) as client:
+                response = client.get(self.mcp_url, headers={"Authorization": f"Bearer {self.access_token}"})
+                response.raise_for_status()
+        except Exception as e:
+            raise RuntimeError(f"Failed to connect to Blaxel MCP server at {self.mcp_url}: {e}") from e
+
+    def __call__(self, *args: Any, **kwargs: Any) -> Any:  # noqa: ANN401
         """Execute the rool remotely on the Blaxel server.
 
         Args:
-            **kwargs: Arguments to pass to the tool.
+            *args: Positional arguments to pass to the tool.
+            **kwargs: Keyword arguments to pass to the tool.
 
         Returns:
             Any: The tool's response, parsed from JSON if applicable.
@@ -44,6 +56,10 @@ class BlaxelToolWrapper:
         Raises:
             RuntimeError: If the remote tool call fails.
         """
+        if args:
+            msg = f"Blaxel MCP tool '{self.tool_name}' does not support positional arguments."
+            raise TypeError(msg)
+
         payload = {
             "name": self.tool_name,
             "arguments": kwargs,
@@ -182,12 +198,16 @@ def load_tool(tool_name: str, is_remote: bool = True) -> Any:  # noqa: ANN401
     if is_remote:
         try:
             tool = _load_blaxel_tool(tool_name)
+            print(f"Loaded remote Blaxel tool '{tool_name}'.")
+            print(errors)
             return tool
         except Exception as e:
             errors.append(f"Remote load failed: {e}")
 
         try:
             tool = _load_local_tool(tool_name)
+            print(f"Loaded local tool '{tool_name}'.")
+            print(errors)
             return tool
         except Exception as e:
             errors.append(f"Local load failed: {e}")
