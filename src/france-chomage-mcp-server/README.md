@@ -3,9 +3,8 @@ title: France Chômage - MCP Server
 emoji: 📊
 colorFrom: green
 colorTo: red
-sdk: gradio
-sdk_version: 6.0.1
-app_file: app.py
+sdk: docker
+app_port: 7860
 pinned: false
 license: mit
 short_description: MCP server providing tools helping AI agents finding jobs.
