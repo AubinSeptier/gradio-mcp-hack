@@ -38,6 +38,30 @@ jobs:
               git commit -m "Sync MCP server content to Hugging Face Space"
             fi
 
+        - name: Delete Dockerfile
+          run: |
+            set -euo pipefail
+            cd /tmp/app-content
+            if [ -f "Dockerfile" ]; then
+              rm "Dockerfile"
+              git add Dockerfile
+              git commit -m "Remove Dockerfile for Hugging Face Space deployment"
+            else
+              echo "No Dockerfile to delete."
+            fi
+
+        - name: Rename Dockerfile-HF to Dockerfile
+          run: |
+            set -euo pipefail
+            cd /tmp/app-content
+            if [ -f "Dockerfile-HF" ]; then
+              mv "Dockerfile-HF" "Dockerfile"
+              git add Dockerfile-HF Dockerfile
+              git commit -m "Rename Dockerfile-HF to Dockerfile for Hugging Face Space deployment"
+            else
+              echo "No Dockerfile-HF to rename."
+            fi
+
         - name: Push to Hugging Face Space
           env:
             HF_TOKEN: ${{ secrets.HF_TOKEN }}
