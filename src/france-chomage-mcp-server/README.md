@@ -8,7 +8,7 @@ sdk_version: 6.0.1
 app_file: app.py
 pinned: false
 license: mit
-short_description: A gradio MCP server providing AI agents with tools to search for and analyze job offers. Created for the Gradio x MCP Hackathon.
+short_description: MCP server providing tools helping AI agents finding jobs.
 tags:
 - building-mcp-track-customer
 ---
