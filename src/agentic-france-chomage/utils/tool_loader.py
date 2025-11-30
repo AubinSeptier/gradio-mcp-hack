@@ -85,39 +85,39 @@ class BlaxelToolWrapper:
                 )
                 response.raise_for_status()
 
-                print(f"Response text: {response.text}")
-
                 sse_data = self._parse_sse_response(response.text)
 
                 if not sse_data:
                     msg = f"Blaxel MCP tool '{self.tool_name}' returned empty response."
                     raise RuntimeError(msg)
 
-                result = sse_data.get("result", {})
+                all_text_contents = []
 
-                if result.get("isError"):
-                    error_msg = "Unknown error"
-                    if "content" in result and result["content"]:
-                        error_msg = result["content"][0].get("text", error_msg)
-                    raise RuntimeError(f"Blaxel remote tool error: {error_msg}")
+                for data in sse_data:
+                    result = data.get("result", {})
 
-                content = result.get("content", [])
-                if not content:
+                    if result.get("isError"):
+                        error_msg = "Unknown error"
+                        if "content" in result and result["content"]:
+                            error_msg = result["content"][0].get("text", error_msg)
+                        raise RuntimeError(f"Blaxel remote tool error: {error_msg}")
+
+                    content = result.get("content", [])
+                    for item in content:
+                        if item.get("type") == "text" and item.get("text"):
+                            all_text_contents.append(item["text"])
+
+                if not all_text_contents:
                     return {}
 
-                text_content = None
-                for item in content:
-                    if item.get("type") == "text":
-                        text_content = item.get("text", "")
-                        break
+                parsed_result = []
+                for text in all_text_contents:
+                    try:
+                        parsed_result.append(json.loads(text))
+                    except json.JSONDecodeError:
+                        parsed_result.append(text)
 
-                if text_content is None:
-                    return {}
-
-                try:
-                    return json.loads(text_content)
-                except json.JSONDecodeError:
-                    return text_content
+                return parsed_result[0] if len(parsed_result) == 1 else parsed_result
 
         except httpx.HTTPError as e:
             msg = f"Blaxel MCP tool '{self.tool_name}' failed with status {e.response.status_code}: {e.response.text}"
@@ -144,14 +144,14 @@ class BlaxelToolWrapper:
         Returns:
             dict: The parsed JSON result from the SSE data.
         """
-        lines = sse_text.strip().split("\n")
-        for line in lines:
+        results = []
+        for line in sse_text.strip().split("\n"):
             if line.startswith("data: "):
                 try:
-                    return json.loads(line[6:])
+                    results.append(json.loads(line[6:].strip()))
                 except json.JSONDecodeError:
                     continue
-        return {}
+        return results
 
     def _processed_file_arguments(self, kwargs: dict) -> dict:
         """Process arguments to convert local file paths to base64 for remote execution.
