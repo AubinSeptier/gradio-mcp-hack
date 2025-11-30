@@ -48,5 +48,5 @@ jobs:
               exit 1
             fi
             cd /tmp/app-content
-            git remote add hf https://huggingface.co/spaces/Aubins/France-Chomage-MCP-Server.git
+            git remote add hf https://huggingface.co/spaces/MCP-1st-Birthday/France-Chomage-MCP-Server.git
             git -c http.extraheader="AUTHORIZATION: Bearer ${HF_TOKEN}" push hf main:main --force
