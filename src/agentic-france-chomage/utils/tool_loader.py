@@ -162,3 +162,48 @@ def _load_blaxel_tool(tool_name: str) -> BlaxelToolWrapper:
         mcp_url=mcp_url,
         access_token=BLAXEL_ACCESS_TOKEN,
     )
+
+
+def load_tool(tool_name: str, is_remote: bool = True) -> Any:  # noqa: ANN401
+    """Import a tool callable with Blaxel remote support and local fallback.
+
+    Args:
+        tool_name (str): The name of the tool to import.
+        is_remote (bool): Whether to load the tool as a remote Blaxel tool first.
+
+    Returns:
+        Any: The imported tool callable.
+
+    Raises:
+        RuntimeError: If the tool cannot be loaded either remotely or locally.
+    """
+    errors = []
+
+    if is_remote:
+        try:
+            tool = _load_blaxel_tool(tool_name)
+            return tool
+        except Exception as e:
+            errors.append(f"Remote load failed: {e}")
+
+        try:
+            tool = _load_local_tool(tool_name)
+            return tool
+        except Exception as e:
+            errors.append(f"Local load failed: {e}")
+
+    else:
+        try:
+            tool = _load_local_tool(tool_name)
+            return tool
+        except Exception as e:
+            errors.append(f"Local load failed: {e}")
+
+        try:
+            tool = _load_blaxel_tool(tool_name)
+            return tool
+        except Exception as e:
+            errors.append(f"Remote load failed: {e}")
+
+    msg = f"Tool '{tool_name}' not found in any source.\nErrors encountered:\n" + "\n".join(f"  - {e}" for e in errors)
+    raise RuntimeError(msg)
