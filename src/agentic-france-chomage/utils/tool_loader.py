@@ -276,12 +276,14 @@ def load_tool(tool_name: str, is_remote: bool = True) -> Any:  # noqa: ANN401
     else:
         try:
             tool = _load_local_tool(tool_name)
+            print(f"Loaded local tool '{tool_name}'.")
             return tool
         except Exception as e:
             errors.append(f"Local load failed: {e}")
 
         try:
             tool = _load_blaxel_tool(tool_name)
+            print(f"Loaded remote Blaxel tool '{tool_name}'.")
             return tool
         except Exception as e:
             errors.append(f"Remote load failed: {e}")
