@@ -1,0 +1,22 @@
+# Dockerfile for France Chomage MCP Server deployment on HF Spaces
+FROM python:3.12-slim
+
+# Set working directory
+WORKDIR /app
+
+# Install system dependencies (if needed)
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    poppler-utils \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy requirements first for better caching
+COPY requirements.txt /app/
+
+RUN pip install -r requirements.txt
+
+# Copy application code
+COPY . .
+
+# Command to run when container starts.
+ENTRYPOINT ["python", "app.py"]
