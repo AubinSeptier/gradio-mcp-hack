@@ -36,7 +36,7 @@ class ResumeData(BaseModel):
     others: list[str] = Field(..., description="Other relevant information")
 
 
-def pdf_to_base64(pdf_path: str) -> str:
+def _pdf_to_base64(pdf_path: str) -> str:
     """Convert PDF file to base64 encoded string.
 
     Args:
@@ -101,7 +101,7 @@ def resume_extractor(resume_file: str) -> dict:
             resume_base64 = base64.b64encode(buffered.getvalue()).decode("utf-8")
 
         else:
-            resume_base64 = pdf_to_base64(resume_file)
+            resume_base64 = _pdf_to_base64(resume_file)
     except ValueError as e:
         return {"error": f"Failed to process resume file: {e}"}
 
