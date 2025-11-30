@@ -136,3 +136,29 @@ def _load_local_tool(tool_name: str) -> Any:  # noqa: ANN401
         return getattr(module, tool_name)
     except Exception as exc:
         raise ImportError(f"Cannot import tool '{tool_name}'.") from exc
+
+
+def _load_blaxel_tool(tool_name: str) -> BlaxelToolWrapper:
+    """Load a Blaxel hosted tool as a BlaxelToolWrapper.
+
+    Args:
+        tool_name (str): The name of the tool to load.
+
+    Returns:
+        BlaxelToolWrapper: The wrapped tool callable.
+
+    Raises:
+        ValueError: If required Blaxel environment variables are not set.
+    """
+    if not all([BLAXEL_WORKSPACE, BLAXEL_SERVER_NAME, BLAXEL_ACCESS_TOKEN]):
+        raise ValueError(
+            "Blaxel environment variables BLAXEL_WORKSPACE, "
+            "BLAXEL_SERVER_NAME, and BLAXEL_ACCESS_TOKEN must be set to load Blaxel tools."
+        )
+
+    mcp_url = f"{BLAXEL_BASE_URL}/{BLAXEL_WORKSPACE}/functions/{BLAXEL_SERVER_NAME}/mcp"
+    return BlaxelToolWrapper(
+        tool_name=tool_name,
+        mcp_url=mcp_url,
+        access_token=BLAXEL_ACCESS_TOKEN,
+    )
