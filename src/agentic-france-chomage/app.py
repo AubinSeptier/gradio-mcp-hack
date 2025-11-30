@@ -473,7 +473,9 @@ with gr.Blocks(title="France Chômage — Agentic matcher", fill_width=True) as 
         """
         # France Chômage — Agentic matcher
         Upload your resume and basic preferences to let our multi-agent graph extract your profile, search job boards,
-        filter irrelevant offers, and rank the best matches. Make sure `NEBIUS_API_KEY` is set in your environment.
+        filter irrelevant offers, and rank the best matches. Sometimes, MCP tools call to Blaxel fail. Please retry if
+        it happens.
+        Make sure `NEBIUS_API_KEY` is set in your environment (FREE ACCESS until 2025-12-16).
         """
     )
 
