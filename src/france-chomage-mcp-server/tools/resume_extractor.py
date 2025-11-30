@@ -6,7 +6,7 @@ import os
 from io import BytesIO
 
 from openai import OpenAI
-from pdf2image import convert_from_path
+from pdf2image import convert_from_bytes, convert_from_path
 from pydantic import BaseModel, Field
 
 
@@ -90,7 +90,16 @@ def resume_extractor(resume_file: str) -> dict:
     try:
         if resume_file.startswith("data:application/pdf;base64,"):
             base64_data = resume_file.split(",", 1)[1]
-            resume_base64 = base64_data
+            pdf_bytes = base64.b64decode(base64_data)
+            image = convert_from_bytes(pdf_bytes, first_page=1, last_page=1)
+
+            if not image:
+                raise ValueError("Could not convert PDF bytes to image.")
+
+            buffered = BytesIO()
+            image[0].save(buffered, format="JPEG", quality=90)
+            resume_base64 = base64.b64encode(buffered.getvalue()).decode("utf-8")
+
         else:
             resume_base64 = pdf_to_base64(resume_file)
     except ValueError as e:
