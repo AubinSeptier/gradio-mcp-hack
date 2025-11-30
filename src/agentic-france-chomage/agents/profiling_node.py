@@ -1,0 +1,34 @@
+"""Agent node that uses the resume_extractor tool to produce profil_extracted from resume_file."""
+
+from __future__ import annotations
+
+from typing import Any
+
+from graph import AgentState
+from utils import load_tool
+
+resume_extractor = load_tool("resume_extractor")
+
+
+# Node ----------------
+def profiling_node(state: AgentState) -> dict[str, Any]:
+    """Extract a structured profile from the provided resume file.
+
+    Args:
+        state (AgentState): Current agent state containing the resume file path.
+
+    Returns:
+        dict[str, Any]: New agent state with extracted profile information.
+
+    Raises:
+        ValueError: If the 'resume_file' path is not present in the state.
+    """
+    resume_file = state.get("resume_file")
+    if not resume_file:
+        raise ValueError("profiling_node requires a 'resume_file' path in the state.")
+
+    extracted_profile = resume_extractor(resume_file=resume_file)
+
+    new_state = dict(state)
+    new_state["profil_extracted"] = extracted_profile
+    return new_state
