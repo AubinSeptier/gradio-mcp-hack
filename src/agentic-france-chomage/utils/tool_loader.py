@@ -35,14 +35,6 @@ class BlaxelToolWrapper:
         self.mcp_url = mcp_url
         self.access_token = access_token
 
-        # A simple request to verify connectivity
-        try:
-            with httpx.Client(timeout=BLAXEL_TIMEOUT) as client:
-                response = client.get(self.mcp_url, headers={"Authorization": f"Bearer {self.access_token}"})
-                response.raise_for_status()
-        except Exception as e:
-            raise RuntimeError(f"Failed to connect to Blaxel MCP server at {self.mcp_url}: {e}") from e
-
     def __call__(self, *args: Any, **kwargs: Any) -> Any:  # noqa: ANN401
         """Execute the rool remotely on the Blaxel server.
 
@@ -61,13 +53,19 @@ class BlaxelToolWrapper:
             raise TypeError(msg)
 
         payload = {
-            "name": self.tool_name,
-            "arguments": kwargs,
+            "jsonrpc": "2.0",
+            "method": "tools/call",
+            "params": {
+                "name": self.tool_name,
+                "args": kwargs,
+            },
+            "id": 1,
         }
 
         headers = {
             "Authorization": f"Bearer {self.access_token}",
             "Content-Type": "application/json",
+            "Accept": "application/json, text/event-stream",
         }
 
         try:
@@ -78,7 +76,14 @@ class BlaxelToolWrapper:
                     headers=headers,
                 )
                 response.raise_for_status()
-                result = response.json()
+
+                sse_data = self._parse_sse_response(response.text)
+
+                if not sse_data:
+                    msg = f"Blaxel MCP tool '{self.tool_name}' returned empty response."
+                    raise RuntimeError(msg)
+
+                result = sse_data.get("result", {})
 
                 if result.get("isError"):
                     error_msg = "Unknown error"
@@ -119,6 +124,24 @@ class BlaxelToolWrapper:
         except Exception as e:
             msg = f"Blaxel MCP tool '{self.tool_name}' encountered an unexpected error: {e}"
             raise RuntimeError(msg) from e
+
+    def _parse_sse_response(self, sse_text: str) -> dict:
+        """Parse Server-Sent Events (SSE) reponse from Blaxel.
+
+        Args:
+            sse_text (str): The raw SSE response text.
+
+        Returns:
+            dict: The parsed JSON result from the SSE data.
+        """
+        lines = sse_text.strip().split("\n")
+        for line in lines:
+            if line.startswith("data: "):
+                try:
+                    return json.loads(line[6:])
+                except json.JSONDecodeError:
+                    continue
+        return {}
 
 
 def _ensure_tools_on_path() -> Path:
